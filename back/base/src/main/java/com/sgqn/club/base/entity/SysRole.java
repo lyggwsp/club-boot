@@ -53,11 +53,5 @@ public class SysRole extends BaseEntity {
     @TableField("status")
     private Integer status;
 
-    /**
-     * 角色创建者，userID
-     */
-    @TableField("creator")
-    private Integer creator;
-
 
 }

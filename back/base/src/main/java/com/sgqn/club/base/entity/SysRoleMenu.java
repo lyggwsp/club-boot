@@ -35,17 +35,5 @@ public class SysRoleMenu extends BaseEntity {
     @TableField("menu_id")
     private Long menuId;
 
-    /**
-     * 创建者ID
-     */
-    @TableField("creator")
-    private Long creator;
-
-    /**
-     * 更新者ID
-     */
-    @TableField("updater")
-    private Long updater;
-
 
 }

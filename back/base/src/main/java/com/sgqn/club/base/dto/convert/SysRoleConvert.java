@@ -2,6 +2,7 @@ package com.sgqn.club.base.dto.convert;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.sgqn.club.base.dto.req.SysRoleReq;
 import com.sgqn.club.base.dto.resp.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 
@@ -13,6 +14,10 @@ import com.sgqn.club.base.entity.SysRole;
  */
 public class SysRoleConvert {
 
+
+    public static SysRole req2do(SysRoleReq sysRoleReq) {
+        return BeanUtil.copyProperties(sysRoleReq, SysRole.class);
+    }
 
     public static IPage<SysRoleResp> do2resp(IPage<SysRole> sysRolePage) {
         return sysRolePage.convert(SysRoleConvert::do2resp);

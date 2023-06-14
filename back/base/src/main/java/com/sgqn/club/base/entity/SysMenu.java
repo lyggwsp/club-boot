@@ -107,17 +107,5 @@ public class SysMenu extends BaseEntity {
     @TableField("sort")
     private Integer sort;
 
-    /**
-     * 创建者,用户ID
-     */
-    @TableField("creator")
-    private Long creator;
-
-    /**
-     * 修改者,用户ID
-     */
-    @TableField("updater")
-    private Long updater;
-
 
 }
