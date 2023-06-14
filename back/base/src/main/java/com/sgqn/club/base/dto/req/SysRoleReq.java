@@ -24,7 +24,7 @@ import javax.validation.constraints.*;
 public class SysRoleReq {
 
     @ApiModelProperty("ID([ 更新 /  删除] 时必填项)")
-    @NotNull(groups = ValidGroup.Update.class, message = "ID 不能为空")
+    @NotNull(groups = {ValidGroup.Update.class, ValidGroup.Delete.class}, message = "ID 不能为空")
     @Min(value = 0, groups = ValidGroup.Update.class, message = "ID 小于 0")
     private Long id;
 

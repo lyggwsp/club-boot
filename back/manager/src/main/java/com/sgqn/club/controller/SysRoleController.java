@@ -39,6 +39,19 @@ public class SysRoleController {
 
 
 
+    @PutMapping
+    @ApiOperation("更新[update]")
+    public ResultBean<?> update(
+            @RequestBody @Validated({ValidGroup.Update.class}) SysRoleReq sysRoleReq) {
+        SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
+        sysRole = sysRoleService.getById(sysRole.getId());
+        if (ObjectUtil.isEmpty(sysRole)) {
+            throw SysRoleException.RoleNotFoundException;
+        }
+        boolean update = sysRoleService.updateById(sysRole);
+        return update ? ResultBean.success("更新成功！")
+                : ResultBean.error("服务器异常，更新失败!");
+    }
 
     @GetMapping
     @ApiOperation("根据ID查询[getById]")
