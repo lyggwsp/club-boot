@@ -1,0 +1,15 @@
+# 数据库
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://150.158.214.106:3306/db_club?serverTimezone=UTC&useSSL=false
+    name: defaultDataSource
+    username: root
+    password: wyr0307
+
+# Mybatis-plus配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# json统一格式
