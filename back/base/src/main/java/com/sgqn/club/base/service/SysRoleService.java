@@ -32,4 +32,6 @@ public interface SysRoleService extends IService<SysRole> {
      * @return 返回是否更新状态成功
      */
     boolean updateRoleStatus(Long roleId, Boolean disabled);
+
+
 }

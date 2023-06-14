@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("角色[SysRoleResp]")
+@ApiModel("系统角色[SysRoleResp]")
 public class SysRoleResp {
 
     @ApiModelProperty(value = "角色名称")
@@ -36,8 +36,5 @@ public class SysRoleResp {
     @ApiModelProperty(value = "角色状态")
     private Integer status;
 
-
-    @ApiModelProperty(value = "角色创建者[用户ID]")
-    private Integer creator;
 
 }

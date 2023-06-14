@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -59,9 +60,10 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     public boolean updateRoleStatus(Long roleId, Boolean disabled) {
-        int state = disabled ? 1 : 0;
         LambdaUpdateWrapper<SysRole> updateWrapper = new UpdateWrapper<SysRole>().lambda()
-                .eq(SysRole::getId, roleId).set(SysRole::getStatus, state);
+                .eq(SysRole::getId, roleId).set(SysRole::getStatus, disabled);
         return this.update(updateWrapper);
     }
+
+
 }

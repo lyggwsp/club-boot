@@ -51,7 +51,7 @@ public class SysRole extends BaseEntity {
      * 角色状态(0表示禁用，1表示启用)
      */
     @TableField("status")
-    private Integer status;
+    private Boolean status;
 
 
 }

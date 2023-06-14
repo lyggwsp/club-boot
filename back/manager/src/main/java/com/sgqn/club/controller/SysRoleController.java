@@ -13,10 +13,11 @@ import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.service.SysRoleService;
 import com.sgqn.club.base.validation.ValidGroup;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,16 +33,16 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys-role")
-@Slf4j
+@Api(tags = "系统角色控制器[sys-role]")
 public class SysRoleController {
 
     @Autowired
     private SysRoleService sysRoleService;
 
 
-    @PatchMapping
-    @ApiModelProperty("更新角色状态[updateStatus]")
-    public ResultBean<?> updateStatus(Long id, Boolean disabled) {
+    @PatchMapping(value = "/updateStatus")
+    @ApiOperation("更新角色状态[updateStatus]")
+    public ResultBean<?> updateStatus(@RequestParam Long id, @RequestParam Boolean disabled) {
         SysRole sysRole = sysRoleService.getById(id);
         if (ObjectUtil.isEmpty(sysRole)) {
             throw SysRoleException.RoleNotFoundException;
@@ -51,13 +52,13 @@ public class SysRoleController {
                 : ResultBean.error("服务器异常，更新状态失败!");
     }
 
-    @PutMapping
+    @PutMapping("/update")
     @ApiOperation("更新[update]")
     public ResultBean<?> update(
             @RequestBody @Validated({ValidGroup.Update.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
-        sysRole = sysRoleService.getById(sysRole.getId());
-        if (ObjectUtil.isEmpty(sysRole)) {
+        SysRole tsysRole = sysRoleService.getById(sysRole.getId());
+        if (ObjectUtil.isEmpty(tsysRole)) {
             throw SysRoleException.RoleNotFoundException;
         }
         boolean update = sysRoleService.updateById(sysRole);
@@ -65,9 +66,9 @@ public class SysRoleController {
                 : ResultBean.error("服务器异常，更新失败!");
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     @ApiOperation("根据ID查询[getById]")
-    public ResultBean<?> getById(Long id) {
+    public ResultBean<?> getById(@PathVariable Long id) {
         Opt.ofNullable(id).orElseThrow(() -> SysRoleException.ID_NULL);
         SysRole sysRole = sysRoleService.getById(id);
         if (!ObjectUtil.isEmpty(sysRole)) {
@@ -78,7 +79,7 @@ public class SysRoleController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     @ApiOperation("(批量)删除[delete]")
     public ResultBean<?> delete(@RequestBody List<Long> roleIdList) {
         if (roleIdList.isEmpty()) {
@@ -89,7 +90,7 @@ public class SysRoleController {
     }
 
 
-    @PostMapping
+    @PostMapping("/save")
     @ApiOperation("新增[save]")
     public ResultBean<String> save(
             @RequestBody @Validated({ValidGroup.Insert.class}) SysRoleReq sysRoleReq) {

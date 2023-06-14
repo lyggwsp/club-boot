@@ -7,9 +7,10 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 /**
- * @description  Mybatis-plus 统一父类
  * @author wspstart
+ * @description Mybatis-plus 统一父类
  * @create 2023-06-13 12:36
  */
 @Data
@@ -37,6 +38,7 @@ public class BaseEntity implements Serializable {
     /**
      * 逻辑删除
      */
+    @TableField(value = "deleted", fill = FieldFill.INSERT)
     @TableLogic
     private Boolean deleted;
 
