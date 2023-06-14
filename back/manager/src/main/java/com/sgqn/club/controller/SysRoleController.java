@@ -13,6 +13,7 @@ import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.service.SysRoleService;
 import com.sgqn.club.base.validation.ValidGroup;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,17 @@ public class SysRoleController {
     private SysRoleService sysRoleService;
 
 
+    @PatchMapping
+    @ApiModelProperty("更新角色状态[updateStatus]")
+    public ResultBean<?> updateStatus(Long id, Boolean disabled) {
+        SysRole sysRole = sysRoleService.getById(id);
+        if (ObjectUtil.isEmpty(sysRole)) {
+            throw SysRoleException.RoleNotFoundException;
+        }
+        boolean updateRoleStatus = sysRoleService.updateRoleStatus(id, disabled);
+        return updateRoleStatus ? ResultBean.success("更新成功")
+                : ResultBean.error("服务器异常，更新状态失败!");
+    }
 
     @PutMapping
     @ApiOperation("更新[update]")

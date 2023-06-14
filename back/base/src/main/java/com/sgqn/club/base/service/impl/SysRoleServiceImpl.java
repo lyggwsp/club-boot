@@ -2,6 +2,8 @@ package com.sgqn.club.base.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
@@ -46,5 +48,20 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         LambdaQueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<SysRoleMenu>().lambda()
                 .in(SysRoleMenu::getRoleId, roleIds);
         return sysRoleMenuService.remove(wrapper);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param roleId   角色ID
+     * @param disabled boolean 类型是否启用  实际 0 表示禁用，1表示启用
+     * @return
+     */
+    @Override
+    public boolean updateRoleStatus(Long roleId, Boolean disabled) {
+        int state = disabled ? 1 : 0;
+        LambdaUpdateWrapper<SysRole> updateWrapper = new UpdateWrapper<SysRole>().lambda()
+                .eq(SysRole::getId, roleId).set(SysRole::getStatus, state);
+        return this.update(updateWrapper);
     }
 }
