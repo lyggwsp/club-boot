@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sgqn.club.base.bean.ResultBean;
+import com.sgqn.club.base.constant.SysRoleTypeEnum;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.dto.convert.SysRoleConvert;
 import com.sgqn.club.base.dto.req.SysRoleReq;
@@ -14,10 +15,9 @@ import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.service.SysRoleService;
 import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +42,8 @@ public class SysRoleController {
 
     @PatchMapping(value = "/updateStatus")
     @ApiOperation("更新角色状态[updateStatus]")
-    public ResultBean<?> updateStatus(@RequestParam Long id, @RequestParam Boolean disabled) {
+    public ResultBean<?> updateStatus(@RequestParam @ApiParam(name = "角色ID", required = true) Long id,
+                                      @RequestParam @ApiParam(name = "是否启用", required = true) Boolean disabled) {
         SysRole sysRole = sysRoleService.getById(id);
         if (ObjectUtil.isEmpty(sysRole)) {
             throw SysRoleException.RoleNotFoundException;
@@ -95,6 +96,8 @@ public class SysRoleController {
     public ResultBean<String> save(
             @RequestBody @Validated({ValidGroup.Insert.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
+        // 设置角色类型
+        SysRole.builder().type(SysRoleTypeEnum.CUSTOM.getType());
         boolean save = sysRoleService.save(sysRole);
         if (save) {
             return ResultBean.success("角色新增成功");

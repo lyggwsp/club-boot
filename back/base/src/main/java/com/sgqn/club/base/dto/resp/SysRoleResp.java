@@ -36,5 +36,7 @@ public class SysRoleResp {
     @ApiModelProperty(value = "角色状态")
     private Integer status;
 
+    @ApiModelProperty(value = "角色类型[0表示系统内置，1表示自定义]")
+    private Integer type;
 
 }

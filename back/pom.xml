@@ -24,6 +24,7 @@
         <lombok.version>1.18.26</lombok.version>
         <hutool.version>5.8.5</hutool.version>
         <springfox.version>3.0.0</springfox.version>
+        <swagger.model>1.5.21</swagger.model>
         <knife4j-openapi2.version>4.1.0</knife4j-openapi2.version>
         <mybatis-plus.version>3.4.3.2</mybatis-plus.version>
         <mysql.version>8.0.31</mysql.version>
@@ -67,6 +68,19 @@
                 <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
                 <version>${knife4j-openapi2.version}</version>
             </dependency>
+
+            <!--规范model实体类注解-->
+            <!--如果不加，则当实体类非String属性没有默认值时,会出现NumberFormatException: For input string:""，
+            这是因为springfox-swagger2(2.9.2)依赖于swagger-models(1.5.20)
+            该版本的swagger只判断了null没有判断空字串符
+            所以会将实体类中非String类型的属性默认赋值为空字符串;
+            而1.5.21版本之后新增了空串判断,所以就不会有该问题了-->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-models</artifactId>
+                <version>${swagger.model}</version>
+            </dependency>
+
 
             <!--mybatis-plus依赖-->
             <dependency>

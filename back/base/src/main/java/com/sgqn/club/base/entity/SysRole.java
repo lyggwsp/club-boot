@@ -48,10 +48,20 @@ public class SysRole extends BaseEntity {
     private String code;
 
     /**
+     * 角色类型(0表示系统内置，1表示自定义)
+     * <p>
+     * 枚举 {@link com.sgqn.club.base.constant.SysRoleTypeEnum}
+     */
+    @TableField("type")
+    private Integer type;
+
+    /**
      * 角色状态(0表示禁用，1表示启用)
+     * <p>
+     * 枚举 {@link com.sgqn.club.base.constant.CommonStatusEnum}
      */
     @TableField("status")
-    private Boolean status;
+    private Integer status;
 
 
 }

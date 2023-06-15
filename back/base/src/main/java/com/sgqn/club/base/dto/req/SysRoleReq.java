@@ -49,9 +49,10 @@ public class SysRoleReq {
     @NotBlank(groups = ValidGroup.Insert.class, message = " 角色代码不能为空 ")
     private String code;
 
-    @ApiModelProperty("状态([ 新增  ] 时必填项)")
-    @NotNull(groups = ValidGroup.Insert.class, message = " 状态值不能为空 ")
-    private Boolean status;
+    @ApiModelProperty(value = "状态([ 新增 ] 时必填项)", allowableValues = "0,1")
+    @Min(value = 0, groups = ValidGroup.Insert.class, message = "状态值必须为0或1")
+    @Max(value = 1, groups = ValidGroup.Insert.class, message = "状态值必须为0或1")
+    private Integer status;
 
 
 }

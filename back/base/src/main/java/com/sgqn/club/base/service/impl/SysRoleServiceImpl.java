@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.mapper.SysRoleMapper;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -61,7 +61,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Override
     public boolean updateRoleStatus(Long roleId, Boolean disabled) {
         LambdaUpdateWrapper<SysRole> updateWrapper = new UpdateWrapper<SysRole>().lambda()
-                .eq(SysRole::getId, roleId).set(SysRole::getStatus, disabled);
+                .eq(SysRole::getId, roleId).set(SysRole::getStatus,
+                        disabled ? CommonStatusEnum.ENABLE.getType() : CommonStatusEnum.DISABLE.getType());
         return this.update(updateWrapper);
     }
 
