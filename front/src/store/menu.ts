@@ -1,30 +1,33 @@
-import { defineStore, storeToRefs } from 'pinia';
+import {defineStore, storeToRefs} from 'pinia';
 import http from './http';
-import { ref, watch } from 'vue';
-import { Response } from '@/types';
-import { RouteOption } from '@/router/interface';
-import { addRoutes, removeRoute } from '@/router/dynamicRoutes';
-import { useSettingStore } from './setting';
-import { RouteRecordRaw, RouteMeta } from 'vue-router';
-import { useAuthStore } from '@/plugins';
+import {ref, watch} from 'vue';
+import {Response} from '@/types';
+import {RouteOption} from '@/router/interface';
+import {addRoutes, removeRoute} from '@/router/dynamicRoutes';
+import {useSettingStore} from './setting';
+import {RouteRecordRaw, RouteMeta} from 'vue-router';
+import {useAuthStore} from '@/plugins';
 import router from '@/router';
 
+/**
+ * 菜单实体类
+ */
 export interface MenuProps {
-  id?: number;
-  name: string;
-  path: string;
-  title?: string;
-  icon?: string;
-  badge?: number | string;
-  target?: '_self' | '_blank';
-  link?: string;
-  component: string;
-  renderMenu?: boolean;
-  permission?: string;
-  parent?: string;
-  children?: MenuProps[];
-  cacheable?: boolean;
-  view?: string;
+    id?: number;
+    name: string;
+    path: string;
+    title?: string;
+    icon?: string;
+    badge?: number | string;
+    target?: '_self' | '_blank';
+    link?: string;
+    component: string;
+    renderMenu?: boolean;
+    permission?: string;
+    parent?: string;
+    children?: MenuProps[];
+    cacheable?: boolean;
+    view?: string;
 }
 
 /**
@@ -33,26 +36,26 @@ export interface MenuProps {
  * @param parentPermission
  */
 function doMenuFilter(routes: Readonly<RouteRecordRaw[]>, parentPermission?: string) {
-  const { hasAuthority } = useAuthStore();
+    const {hasAuthority} = useAuthStore();
 
-  const setCache = (meta: RouteMeta) => {
-    meta._cache = {
-      renderMenu: meta.renderMenu,
+    const setCache = (meta: RouteMeta) => {
+        meta._cache = {
+            renderMenu: meta.renderMenu,
+        };
     };
-  };
 
-  routes.forEach((route) => {
-    const required = route.meta?.permission ?? parentPermission;
-    // if (route.meta?.renderMenu === undefined && required) {
-    if (required) {
-      route.meta = route.meta ?? {};
-      setCache(route.meta);
-      route.meta.renderMenu = hasAuthority(route.meta.permission);
-    }
-    if (route.children) {
-      doMenuFilter(route.children, required);
-    }
-  });
+    routes.forEach((route) => {
+        const required = route.meta?.permission ?? parentPermission;
+        // if (route.meta?.renderMenu === undefined && required) {
+        if (required) {
+            route.meta = route.meta ?? {};
+            setCache(route.meta);
+            route.meta.renderMenu = hasAuthority(route.meta.permission);
+        }
+        if (route.children) {
+            doMenuFilter(route.children, required);
+        }
+    });
 }
 
 /**
@@ -60,113 +63,121 @@ function doMenuFilter(routes: Readonly<RouteRecordRaw[]>, parentPermission?: str
  * @param routes
  */
 function resetMenuFilter(routes: Readonly<RouteRecordRaw[]>) {
-  const resetCache = (meta: RouteMeta) => {
-    if (meta._cache) {
-      meta.renderMenu = meta._cache?.renderMenu;
-    }
-    delete meta._cache;
-  };
-  routes.forEach((route) => {
-    if (route.meta) {
-      resetCache(route.meta);
-    }
-    if (route.children) {
-      resetMenuFilter(route.children);
-    }
-  });
+    const resetCache = (meta: RouteMeta) => {
+        if (meta._cache) {
+            meta.renderMenu = meta._cache?.renderMenu;
+        }
+        delete meta._cache;
+    };
+    routes.forEach((route) => {
+        if (route.meta) {
+            resetCache(route.meta);
+        }
+        if (route.children) {
+            resetMenuFilter(route.children);
+        }
+    });
 }
 
 // 菜单数据转为路由数据
 const toRoutes = (list: MenuProps[]): RouteOption[] => {
-  return list.map((item) => ({
-    name: item.name,
-    path: item.path,
-    component: item.component,
-    children: item.children && toRoutes(item.children),
-    meta: {
-      title: item.title,
-      permission: item.permission,
-      icon: item.icon,
-      renderMenu: item.renderMenu,
-      cacheable: item.cacheable,
-      href: item.link,
-      badge: /^(false|true)$/i.test(item.badge + '') ? JSON.parse(item.badge + '') : item.badge,
-      target: item.target,
-      view: item.view,
-    },
-  }));
+    return list.map((item) => ({
+        name: item.name,
+        path: item.path,
+        component: item.component,
+        children: item.children && toRoutes(item.children),
+        meta: {
+            title: item.title,
+            permission: item.permission,
+            icon: item.icon,
+            renderMenu: item.renderMenu,
+            cacheable: item.cacheable,
+            href: item.link,
+            badge: /^(false|true)$/i.test(item.badge + '') ? JSON.parse(item.badge + '') : item.badge,
+            target: item.target,
+            view: item.view,
+        },
+    }));
 };
 
 export const useMenuStore = defineStore('menu', () => {
-  const menuList = ref<MenuProps[]>([]);
+    const menuList = ref<MenuProps[]>([]);
 
-  const loading = ref(false);
+    const loading = ref(false);
 
-  const { filterMenu } = storeToRefs(useSettingStore());
+    const {filterMenu} = storeToRefs(useSettingStore());
 
-  const checkMenuPermission = () => {
-    console.log('------');
-    if (filterMenu.value) {
-      doMenuFilter(router.options.routes);
-      console.log(router.options.routes);
-    } else {
-      resetMenuFilter(router.options.routes);
-    }
-  };
-
-  checkMenuPermission();
-
-  watch(filterMenu, checkMenuPermission);
-
-  async function getMenuList() {
-    loading.value = true;
-    return http
-      .request<MenuProps[], Response<MenuProps[]>>('/menu', 'GET')
-      .then((res) => {
-        const { data } = res;
-        menuList.value = data;
-        addRoutes(toRoutes(data));
-        checkMenuPermission();
-        return data;
-      })
-      .finally(() => (loading.value = false));
-  }
-
-  async function addMenu(menu: MenuProps) {
-    return http
-      .request<any, Response<any>>('/menu', 'POST_JSON', menu)
-      .then((res) => {
-        return res.data;
-      })
-      .finally(getMenuList);
-  }
-
-  async function updateMenu(menu: MenuProps) {
-    return http
-      .request<any, Response<any>>('/menu', 'PUT_JSON', menu)
-      .then((res) => {
-        return res.data;
-      })
-      .finally(getMenuList);
-  }
-
-  async function removeMenu(id: number) {
-    return http
-      .request<any, Response<any>>('/menu', 'DELETE', { id })
-      .then(async (res) => {
-        if (res.code === 0) {
-          removeRoute(res.data.name);
+    const checkMenuPermission = () => {
+        console.log('------');
+        if (filterMenu.value) {
+            doMenuFilter(router.options.routes);
+            console.log(router.options.routes);
+        } else {
+            resetMenuFilter(router.options.routes);
         }
-      })
-      .finally(getMenuList);
-  }
+    };
 
-  return {
-    loading,
-    menuList,
-    getMenuList,
-    addMenu,
-    updateMenu,
-    removeMenu,
-  };
+    checkMenuPermission();
+
+    watch(filterMenu, checkMenuPermission);
+
+    /**
+     * 获取菜单
+     */
+    async function getMenuList() {
+        loading.value = true;
+        return http
+            .request<MenuProps[], Response<MenuProps[]>>('/menu', 'GET')
+            .then((res) => {
+                console.log("@@", res)
+                const {data} = res;
+                menuList.value = data;
+                addRoutes(toRoutes(data));
+                checkMenuPermission();
+                return data;
+            })
+            .finally(() => (loading.value = false));
+    }
+
+    /**
+     * 添加菜单
+     * @param menu
+     */
+    async function addMenu(menu: MenuProps) {
+        return http
+            .request<any, Response<any>>('/menu', 'POST_JSON', menu)
+            .then((res) => {
+                return res.data;
+            })
+            .finally(getMenuList);
+    }
+
+    async function updateMenu(menu: MenuProps) {
+        return http
+            .request<any, Response<any>>('/menu', 'PUT_JSON', menu)
+            .then((res) => {
+                return res.data;
+            })
+            .finally(getMenuList);
+    }
+
+    async function removeMenu(id: number) {
+        return http
+            .request<any, Response<any>>('/menu', 'DELETE', {id})
+            .then(async (res) => {
+                if (res.code === 0) {
+                    removeRoute(res.data.name);
+                }
+            })
+            .finally(getMenuList);
+    }
+
+    return {
+        loading,
+        menuList,
+        getMenuList,
+        addMenu,
+        updateMenu,
+        removeMenu,
+    };
 });
