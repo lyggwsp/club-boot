@@ -22,16 +22,31 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('@/pages/login'),
     },
+    /**
+     * target：'_self'在页面的元数据中打开，表示在当前页面打开而不是新页面中打开。
+     * target: '_blank'表示在新页面中打开
+     */
     {
-        path: '/system/role',
-        name: '角色管理',
+        path: '/temp-system',
+        name: '系统配置',
         meta: {
-            icon: 'LoginOutlined',
-            view: 'blank',
-            target: '_blank',
-            cacheable: false,
+            icon: 'SettingOutlined',
+            renderMenu: true,
         },
-        component: () => import('@/pages/system/role/index'),
+        component: () => import('@/components/layout/BlankView.vue'),
+        children: [
+            {
+                path: '/role',
+                name: '角色管理',
+                meta: {
+                    icon: 'LoginOutlined',
+                    target: '_self',
+                    cacheable: true,
+                    renderMenu: true
+                },
+                component: () => import('@/pages/system/role/index'),
+            },
+        ]
     },
     /* {
        path: '/front',
