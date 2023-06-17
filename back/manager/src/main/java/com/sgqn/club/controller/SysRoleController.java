@@ -39,18 +39,12 @@ public class SysRoleController {
     @Autowired
     private SysRoleService sysRoleService;
 
-    @PostMapping
-    @ApiOperation("条件查询[getByCondition]")
-    public ResultBean<?> getByCondition(SysRoleReq sysRoleReq) {
-        return ResultBean.error("接口待实现");
-    }
-
-    @DeleteMapping
+    @DeleteMapping("/delete-id")
     @ApiOperation("删除单个角色[deleteById]")
     public ResultBean<?> deleteById(@RequestHeader("X-Role-Ids")
                                     @ApiParam(name = "角色ID", required = true) Long id) {
-
-        return ResultBean.error("接口待实现");
+        sysRoleService.removeSysRoleById(id);
+        return ResultBean.success("删除成功");
     }
 
     @GetMapping
@@ -59,7 +53,7 @@ public class SysRoleController {
         return ResultBean.error("接口待实现");
     }
 
-    @PatchMapping(value = "/updateStatus")
+    @PatchMapping(value = "/update-status")
     @ApiOperation("更新角色状态[updateStatus]")
     public ResultBean<?> updateStatus(@RequestParam @ApiParam(name = "角色ID", required = true) Long id,
                                       @RequestParam @ApiParam(name = "是否启用", required = true) Boolean disabled) {
@@ -120,9 +114,10 @@ public class SysRoleController {
     @PostMapping("/condition")
     @ApiOperation("分页条件查询[getByCondition]")
     public ResultBean<IPage<SysRoleResp>> getByCondition(SysRoleCondition condition) {
-        Page<SysRole> page = sysRoleService.page(condition.getPage());
+        Page<SysRole> page = condition.getPage();
         if (page.getSize() != 0) {
-            IPage<SysRoleResp> respPage = SysRoleConvert.do2resp(page);
+            IPage<SysRole> ipage = sysRoleService.getByCondition(page, condition);
+            IPage<SysRoleResp> respPage = SysRoleConvert.do2resp(ipage);
             return ResultBean.success("查询成功", respPage);
         }
         return ResultBean.notFound("无角色信息");

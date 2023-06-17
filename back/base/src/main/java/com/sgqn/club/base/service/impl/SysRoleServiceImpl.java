@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.SysRoleCodeEnum;
 import com.sgqn.club.base.constant.SysRoleTypeEnum;
+import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.exception.SysRoleException;
@@ -35,7 +38,23 @@ import java.util.List;
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
     @Autowired
+    private SysRoleMapper sysRoleMapper;
+
+    @Autowired
     private SysRoleMenuService sysRoleMenuService;
+
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param page             简单分页模型
+     * @param sysRoleCondition 分页查询条件
+     * @return
+     */
+    @Override
+    public IPage<SysRole> getByCondition(Page<SysRole> page, SysRoleCondition sysRoleCondition) {
+        return sysRoleMapper.selectByCondition(page, sysRoleCondition);
+    }
 
     /**
      * {@inheritDoc}
@@ -114,7 +133,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         // 1、校验角色信息
         validateDuplicateSysRole(sysRole.getName(), sysRole.getCode(), null);
         // 2、插入数据到角色表中
-        SysRole.builder().type(SysRoleTypeEnum.CUSTOM.getType());
+        sysRole.setType(SysRoleTypeEnum.CUSTOM.getType());
         return this.save(sysRole);
     }
 
@@ -151,9 +170,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         }
         //2、该角色的名字是否被占用
         LambdaQueryWrapper<SysRole> queryWrapper = new LambdaQueryWrapper<SysRole>()
-                .eq(SysRole::getName, roleCode);
+                .eq(SysRole::getName, roleName);
         SysRole role = this.getOne(queryWrapper);
-        if (ObjectUtil.isEmpty(role) && role.getId().equals(id)) {
+        if (!ObjectUtil.isEmpty(role) && !role.getId().equals(id)) {
             throw SysRoleException.ROLE_NAME_DUPLICATE;
         }
         //3、是否存在编码相通的角色信息
@@ -164,7 +183,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         LambdaQueryWrapper<SysRole> codeWrapper = new LambdaQueryWrapper<SysRole>()
                 .eq(SysRole::getCode, roleCode);
         role = this.getOne(codeWrapper);
-        if (ObjectUtil.isEmpty(role) && role.getId().equals(id)) {
+        if (!ObjectUtil.isEmpty(role) && !role.getId().equals(id)) {
             throw SysRoleException.ROLE_CODE_DUPLICATE;
         }
     }

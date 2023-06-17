@@ -11,5 +11,7 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.sgqn.club.base.entity,com.sgqn.club.base.dto
 
 # json统一格式

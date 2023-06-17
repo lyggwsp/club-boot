@@ -45,7 +45,7 @@ public class SysRoleReq {
     private Integer sort;
 
     @ApiModelProperty("code([ 新增  ] 时必填项)")
-    @Pattern(groups = {ValidGroup.Insert.class, ValidGroup.Update.class}, regexp = "^[a-zA-Z]+$", message = " 角色代码必须是中文 ")
+    @Pattern(groups = {ValidGroup.Insert.class, ValidGroup.Update.class}, regexp = "^[a-zA-Z._]+$", message = " 角色代码必须是中文 ")
     @NotBlank(groups = ValidGroup.Insert.class, message = " 角色代码不能为空 ")
     private String code;
 
