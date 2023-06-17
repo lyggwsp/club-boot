@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * @description  Mybatis-plus 统一父类
  * @author wspstart
+ * @description Mybatis-plus 统一父类
  * @create 2023-06-13 12:36
  */
 @Data

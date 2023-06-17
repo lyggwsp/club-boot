@@ -15,12 +15,12 @@ public enum CommonStatusEnum {
     /**
      * 启用状态
      */
-    ENABLE(0, "启用"),
+    ENABLE(1, "启用"),
 
     /**
      * 禁用状态
      */
-    DISABLE(1, "禁用");
+    DISABLE(0, "禁用");
 
     private final Integer type;
 

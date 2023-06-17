@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -39,6 +40,23 @@ public class SysRoleController {
     @Autowired
     private SysRoleService sysRoleService;
 
+    @PostMapping
+    @ApiOperation("条件查询[getByCondition]")
+    public ResultBean<?> getByCondition(SysRoleReq sysRoleReq) {
+        return ResultBean.error("接口待实现");
+    }
+
+    @DeleteMapping
+    @ApiOperation("删除单个角色[deleteById]")
+    public ResultBean<?> deleteById(Long id) {
+        return ResultBean.error("接口待实现");
+    }
+
+    @GetMapping
+    @ApiOperation("导出角色信息[]")
+    public ResultBean<?> exportRoleInfo(HttpServletResponse response) {
+        return ResultBean.error("接口待实现");
+    }
 
     @PatchMapping(value = "/updateStatus")
     @ApiOperation("更新角色状态[updateStatus]")
@@ -82,7 +100,7 @@ public class SysRoleController {
 
     @DeleteMapping("/delete")
     @ApiOperation("(批量)删除[delete]")
-    public ResultBean<?> delete(@RequestBody List<Long> roleIdList) {
+    public ResultBean<?> delete(@RequestHeader("X-Role-Ids") List<Long> roleIdList) {
         if (roleIdList.isEmpty()) {
             throw SysRoleException.ID_NULL;
         }
@@ -96,8 +114,9 @@ public class SysRoleController {
     public ResultBean<String> save(
             @RequestBody @Validated({ValidGroup.Insert.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
-        // 设置角色类型
+        // 1、设置角色类型
         SysRole.builder().type(SysRoleTypeEnum.CUSTOM.getType());
+        // 2、service判断等
         boolean save = sysRoleService.save(sysRole);
         if (save) {
             return ResultBean.success("角色新增成功");

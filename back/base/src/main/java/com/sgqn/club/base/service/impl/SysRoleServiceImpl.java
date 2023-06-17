@@ -40,12 +40,14 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Override
     @Transactional
     public boolean removeSysRoleBatch(List<Long> roleIds) {
-        // 1、删除角色信息
+        //1、判断角色是否是系统内置角色，内置角色无法删除
+
+        // 2、删除角色信息
         boolean removeRoles = this.removeByIds(roleIds);
         if (!removeRoles) {
             return false;
         }
-        // 2、删除角色菜单中间表对应的信息
+        // 3、删除角色菜单中间表对应的信息
         LambdaQueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<SysRoleMenu>().lambda()
                 .in(SysRoleMenu::getRoleId, roleIds);
         return sysRoleMenuService.remove(wrapper);
