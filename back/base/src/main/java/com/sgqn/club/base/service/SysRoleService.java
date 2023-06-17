@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
+import com.sgqn.club.base.dto.resp.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -67,5 +69,13 @@ public interface SysRoleService extends IService<SysRole> {
      * @return 返回是否新增成功
      */
     boolean saveRole(SysRole sysRole);
+
+    /**
+     * 获取角色列表
+     *
+     * @return 全部角色信息
+     */
+    List<SysRole> getRoleList();
+
 
 }

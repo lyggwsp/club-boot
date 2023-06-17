@@ -8,10 +8,12 @@ import com.sgqn.club.base.bean.ResultBean;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.dto.convert.SysRoleConvert;
 import com.sgqn.club.base.dto.req.SysRoleReq;
+import com.sgqn.club.base.dto.resp.SysRoleExcelResp;
 import com.sgqn.club.base.dto.resp.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.service.SysRoleService;
+import com.sgqn.club.base.utils.ExcelUtils;
 import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -47,10 +50,14 @@ public class SysRoleController {
         return ResultBean.success("删除成功");
     }
 
-    @GetMapping
-    @ApiOperation("导出角色信息[]")
-    public ResultBean<?> exportRoleInfo(HttpServletResponse response) {
-        return ResultBean.error("接口待实现");
+    @GetMapping(value = "/export-role")
+    @ApiOperation("导出角色信息")
+    public void exportRoleInfo(HttpServletResponse response) throws IOException {
+
+        List<SysRoleExcelResp> data = SysRoleConvert.do2resp(sysRoleService.getRoleList());
+        // 输出
+        ExcelUtils.write(response, "role_data.xlsx", "角色列表", SysRoleExcelResp.class, data);
+
     }
 
     @PatchMapping(value = "/update-status")

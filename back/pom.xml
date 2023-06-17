@@ -28,6 +28,7 @@
         <knife4j-openapi2.version>4.1.0</knife4j-openapi2.version>
         <mybatis-plus.version>3.4.3.2</mybatis-plus.version>
         <mysql.version>8.0.31</mysql.version>
+        <easyExcel.version>3.3.1</easyExcel.version>
     </properties>
 
     <dependencyManagement>
@@ -100,6 +101,11 @@
                 <artifactId>spring-boot-starter-validation</artifactId>
             </dependency>
 
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>easyexcel</artifactId>
+                <version>${easyExcel.version}</version>
+            </dependency>
 
         </dependencies>
 
