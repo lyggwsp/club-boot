@@ -5,7 +5,6 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sgqn.club.base.bean.ResultBean;
-import com.sgqn.club.base.constant.SysRoleTypeEnum;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.dto.convert.SysRoleConvert;
 import com.sgqn.club.base.dto.req.SysRoleReq;
@@ -48,7 +47,9 @@ public class SysRoleController {
 
     @DeleteMapping
     @ApiOperation("删除单个角色[deleteById]")
-    public ResultBean<?> deleteById(Long id) {
+    public ResultBean<?> deleteById(@RequestHeader("X-Role-Ids")
+                                    @ApiParam(name = "角色ID", required = true) Long id) {
+
         return ResultBean.error("接口待实现");
     }
 
@@ -62,10 +63,6 @@ public class SysRoleController {
     @ApiOperation("更新角色状态[updateStatus]")
     public ResultBean<?> updateStatus(@RequestParam @ApiParam(name = "角色ID", required = true) Long id,
                                       @RequestParam @ApiParam(name = "是否启用", required = true) Boolean disabled) {
-        SysRole sysRole = sysRoleService.getById(id);
-        if (ObjectUtil.isEmpty(sysRole)) {
-            throw SysRoleException.RoleNotFoundException;
-        }
         boolean updateRoleStatus = sysRoleService.updateRoleStatus(id, disabled);
         return updateRoleStatus ? ResultBean.success("更新成功")
                 : ResultBean.error("服务器异常，更新状态失败!");
@@ -76,11 +73,7 @@ public class SysRoleController {
     public ResultBean<?> update(
             @RequestBody @Validated({ValidGroup.Update.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
-        SysRole tsysRole = sysRoleService.getById(sysRole.getId());
-        if (ObjectUtil.isEmpty(tsysRole)) {
-            throw SysRoleException.RoleNotFoundException;
-        }
-        boolean update = sysRoleService.updateById(sysRole);
+        boolean update = sysRoleService.updateRole(sysRole);
         return update ? ResultBean.success("更新成功！")
                 : ResultBean.error("服务器异常，更新失败!");
     }
@@ -99,7 +92,8 @@ public class SysRoleController {
 
 
     @DeleteMapping("/delete")
-    @ApiOperation("(批量)删除[delete]")
+    @ApiOperation("批量删除[delete]")
+    @Deprecated
     public ResultBean<?> delete(@RequestHeader("X-Role-Ids") List<Long> roleIdList) {
         if (roleIdList.isEmpty()) {
             throw SysRoleException.ID_NULL;
@@ -114,10 +108,7 @@ public class SysRoleController {
     public ResultBean<String> save(
             @RequestBody @Validated({ValidGroup.Insert.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
-        // 1、设置角色类型
-        SysRole.builder().type(SysRoleTypeEnum.CUSTOM.getType());
-        // 2、service判断等
-        boolean save = sysRoleService.save(sysRole);
+        boolean save = sysRoleService.saveRole(sysRole);
         if (save) {
             return ResultBean.success("角色新增成功");
         } else {

@@ -1,20 +1,26 @@
 package com.sgqn.club.base.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.constant.CommonStatusEnum;
+import com.sgqn.club.base.constant.SysRoleCodeEnum;
+import com.sgqn.club.base.constant.SysRoleTypeEnum;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
+import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.mapper.SysRoleMapper;
 import com.sgqn.club.base.service.SysRoleMenuService;
 import com.sgqn.club.base.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -38,19 +44,30 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * @return
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeSysRoleBatch(List<Long> roleIds) {
-        //1、判断角色是否是系统内置角色，内置角色无法删除
+        roleIds.forEach(this::removeSysRoleById);
+        return true;
+    }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param id 角色ID
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeSysRoleById(Long id) {
+        // 1、校验角色信息
+        validateRoleForUpdate(id);
         // 2、删除角色信息
-        boolean removeRoles = this.removeByIds(roleIds);
-        if (!removeRoles) {
-            return false;
-        }
-        // 3、删除角色菜单中间表对应的信息
+        this.removeById(id);
+        // 3、删除相关菜单权限信息
         LambdaQueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<SysRoleMenu>().lambda()
-                .in(SysRoleMenu::getRoleId, roleIds);
-        return sysRoleMenuService.remove(wrapper);
+                .eq(SysRoleMenu::getRoleId, id);
+        sysRoleMenuService.remove(wrapper);
+        return true;
     }
 
     /**
@@ -62,11 +79,94 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     public boolean updateRoleStatus(Long roleId, Boolean disabled) {
+        // 1、校验待角色信息
+        validateRoleForUpdate(roleId);
+        // 2、更新角色状态
         LambdaUpdateWrapper<SysRole> updateWrapper = new UpdateWrapper<SysRole>().lambda()
                 .eq(SysRole::getId, roleId).set(SysRole::getStatus,
                         disabled ? CommonStatusEnum.ENABLE.getType() : CommonStatusEnum.DISABLE.getType());
         return this.update(updateWrapper);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param sysRole 待更新的角色信息
+     * @return
+     */
+    @Override
+    public boolean updateRole(@NotNull SysRole sysRole) {
+        // 1、校验角色是否可以更新
+        validateRoleForUpdate(sysRole.getId());
+        // 2、校验角色的唯一字段是否重复
+        validateDuplicateSysRole(sysRole.getName(), sysRole.getCode(), sysRole.getId());
+        return this.updateById(sysRole);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param sysRole 角色信息
+     * @return
+     */
+    @Override
+    public boolean saveRole(@NotNull SysRole sysRole) {
+        // 1、校验角色信息
+        validateDuplicateSysRole(sysRole.getName(), sysRole.getCode(), null);
+        // 2、插入数据到角色表中
+        SysRole.builder().type(SysRoleTypeEnum.CUSTOM.getType());
+        return this.save(sysRole);
+    }
+
+    /**
+     * 校验角色是否可以更新
+     *
+     * @param id 角色信息
+     */
+    void validateRoleForUpdate(Long id) {
+        SysRole sysRole = this.getById(id);
+        // 1、校验角色是否存在
+        if (ObjectUtil.isEmpty(sysRole)) {
+            throw SysRoleException.ROLE_NOT_FOUND_EXCEPTION;
+        }
+        // 2、校验角色是否为内置角色
+        if (SysRoleTypeEnum.SYSTEM.getType().equals(sysRole.getType())) {
+            throw SysRoleException.ROLE_CAN_NOT_UPDATE_SYSTEM_TYPE_ROLE;
+        }
+    }
+
+    /**
+     * 校验角色的唯一字段是否重复
+     * 1、是否具有相同的角色名
+     * 2、是否具有相同编码的角色
+     *
+     * @param roleName 角色名
+     * @param roleCode 角色编码
+     * @param id       角色ID
+     */
+    void validateDuplicateSysRole(String roleName, String roleCode, Long id) {
+        //1、超级管理员，不允许创建
+        if (SysRoleCodeEnum.isSuperAdmin(roleCode)) {
+            throw SysRoleException.ROLE_ADMIN_CODE_ERROR;
+        }
+        //2、该角色的名字是否被占用
+        LambdaQueryWrapper<SysRole> queryWrapper = new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getName, roleCode);
+        SysRole role = this.getOne(queryWrapper);
+        if (ObjectUtil.isEmpty(role) && role.getId().equals(id)) {
+            throw SysRoleException.ROLE_NAME_DUPLICATE;
+        }
+        //3、是否存在编码相通的角色信息
+        if (!StringUtils.hasText(roleCode)) {
+            return;
+        }
+        // 该 code 编码被其他角色占用
+        LambdaQueryWrapper<SysRole> codeWrapper = new LambdaQueryWrapper<SysRole>()
+                .eq(SysRole::getCode, roleCode);
+        role = this.getOne(codeWrapper);
+        if (ObjectUtil.isEmpty(role) && role.getId().equals(id)) {
+            throw SysRoleException.ROLE_CODE_DUPLICATE;
+        }
+    }
 
 }

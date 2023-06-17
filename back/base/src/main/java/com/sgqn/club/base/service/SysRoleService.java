@@ -23,6 +23,13 @@ public interface SysRoleService extends IService<SysRole> {
      */
     boolean removeSysRoleBatch(List<Long> roleIds);
 
+    /**
+     * 根据角色ID删除角色信息
+     *
+     * @param id 角色ID
+     * @return 返回是否删除成功
+     */
+    boolean removeSysRoleById(Long id);
 
     /**
      * 更新角色状态
@@ -33,5 +40,20 @@ public interface SysRoleService extends IService<SysRole> {
      */
     boolean updateRoleStatus(Long roleId, Boolean disabled);
 
+    /**
+     * 更新角色信息
+     *
+     * @param sysRole 待更新的角色信息
+     * @return 返回是否更新成功
+     */
+    boolean updateRole(SysRole sysRole);
+
+    /**
+     * 新增角色信息
+     *
+     * @param sysRole 角色信息
+     * @return 返回是否新增成功
+     */
+    boolean saveRole(SysRole sysRole);
 
 }
