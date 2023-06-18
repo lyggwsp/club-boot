@@ -1,9 +1,6 @@
 package com.sgqn.club.base.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -15,7 +12,6 @@ import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.SysRoleCodeEnum;
 import com.sgqn.club.base.constant.SysRoleTypeEnum;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
-import com.sgqn.club.base.dto.resp.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.exception.SysRoleException;
@@ -27,13 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>

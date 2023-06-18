@@ -50,13 +50,13 @@ public class SysRoleController {
         return ResultBean.success("删除成功");
     }
 
-    @GetMapping(value = "/export-role")
+    @GetMapping(value = "/export-role",produces = "application/vnd.ms-excel;charset=UTF-8")
     @ApiOperation("导出角色信息")
     public void exportRoleInfo(HttpServletResponse response) throws IOException {
 
         List<SysRoleExcelResp> data = SysRoleConvert.do2resp(sysRoleService.getRoleList());
         // 输出
-        ExcelUtils.write(response, "role_data.xlsx", "角色列表", SysRoleExcelResp.class, data);
+        ExcelUtils.write(response, "role_data.xls", "角色列表", SysRoleExcelResp.class, data);
 
     }
 

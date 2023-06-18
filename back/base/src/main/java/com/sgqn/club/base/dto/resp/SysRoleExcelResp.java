@@ -18,7 +18,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class SysRoleExcelResp {
-    @ExcelProperty("角色编号")
+
+    @ExcelProperty(" 角色编号 ")
     private String id;
 
     @ExcelProperty("角色名称")
