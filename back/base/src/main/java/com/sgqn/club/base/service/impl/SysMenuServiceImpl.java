@@ -53,7 +53,16 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      */
     @Override
     public void updateMenu(SysMenu sysMenu) {
-
+        // 1、校验菜单是否存在
+        if (this.getById(sysMenu.getId()) == null){
+            throw SysMenuException.MENU_NOT_EXISTS;
+        }
+        // 2、校验父菜单是否存在
+        validateParentMenu(sysMenu.getParentId(),sysMenu.getId());
+        // 3、 校验自己
+        validateMenu(sysMenu.getParentId(),sysMenu.getName(),sysMenu.getId());
+        // 4、更新到数据库
+        this.updateById(sysMenu);
     }
 
 
@@ -183,7 +192,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         if (menu == null) {
             return;
         }
-        // 如果 id 为空，说明不用比较是否相同 id 的菜单
+        // 如果 id 为空，说明不用比较是否相同 id 的菜单 （对于新增来说，证明菜单已经存在了）
         if (id == null) {
             throw SysMenuException.MENU_NAME_DUPLICATE;
         }

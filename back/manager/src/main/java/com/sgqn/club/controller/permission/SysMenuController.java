@@ -6,6 +6,7 @@ import com.sgqn.club.base.dto.req.permission.menu.SysMenuCreateReq;
 import com.sgqn.club.base.dto.req.permission.menu.SysMenuUpdateReq;
 import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.service.SysMenuService;
+import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,19 @@ public class SysMenuController {
 
     @PostMapping("/create")
     @ApiOperation("创建菜单[createMenu]")
-    public ResultBean<?> createMenu(@RequestBody @Validated SysMenuCreateReq sysMenuCreateReq) {
+    public ResultBean<?> createMenu(@RequestBody @Validated({ValidGroup.Insert.class}) SysMenuCreateReq sysMenuCreateReq) {
         SysMenu sysMenu = SysMenuConvert.req2do(sysMenuCreateReq);
         Long menuId = sysMenuService.createMenu(sysMenu);
-        return ResultBean.error("功能待实现");
+        return menuId > 0 ? ResultBean.success("创建成功")
+                : ResultBean.error("创建菜单失败");
     }
 
     @PutMapping("/update")
     @ApiOperation("修改菜单[updateMenu]")
     public ResultBean<?> updateMenu(SysMenuUpdateReq sysMenuUpdateReq) {
-        return ResultBean.error("功能待实现");
+        SysMenu sysMenu = SysMenuConvert.req2do(sysMenuUpdateReq);
+        sysMenuService.updateMenu(sysMenu);
+        return ResultBean.success("更新菜单成功");
     }
 
     @DeleteMapping("/delete")

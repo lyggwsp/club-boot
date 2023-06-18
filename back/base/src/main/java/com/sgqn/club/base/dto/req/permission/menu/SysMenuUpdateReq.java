@@ -34,7 +34,7 @@ public class SysMenuUpdateReq {
     @Size(max = 50, message = "菜单名称长度不能超过50个字符")
     private String name;
 
-    @ApiModelProperty(value = "类型,参考MenuTypeEnum类型", example = "1", required = true)
+    @ApiModelProperty(value = "类型,参考MenuTypeEnum类型", example = "1")
     @NotNull(message = "菜单类型不能为空")
     private Integer menuType;
 
@@ -74,10 +74,10 @@ public class SysMenuUpdateReq {
     @ApiModelProperty(value = "页面是否可关闭", example = "是")
     private Boolean closeable;
 
-    @ApiModelProperty(value = "父菜单 ID ", required = true, example = "1024")
+    @ApiModelProperty(value = "父菜单 ID ", example = "1024")
     private Long parentId;
 
-    @ApiModelProperty(value = "显示排序", required = true, example = "1024")
+    @ApiModelProperty(value = "显示排序", example = "1024")
     @NotNull(message = "显示排序不能为空")
     private Integer sort;
 }
