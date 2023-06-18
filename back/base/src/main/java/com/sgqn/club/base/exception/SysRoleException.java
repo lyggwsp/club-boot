@@ -5,7 +5,7 @@ package com.sgqn.club.base.exception;
  * @description
  * @create 2023-06-14 17:57
  */
-public class SysRoleException extends ClubException {
+public class SysRoleException extends TopClubException {
 
     public static final SysRoleException ID_NULL = new SysRoleException(" 角色ID不能为空 ");
     public static final SysRoleException ROLE_NOT_FOUND_EXCEPTION = new SysRoleException(" 角色不存在 ");

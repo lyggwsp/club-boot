@@ -1,7 +1,7 @@
 package com.sgqn.club.controller;
 
 import com.sgqn.club.base.bean.ResultBean;
-import com.sgqn.club.base.exception.ClubException;
+import com.sgqn.club.base.exception.TopClubException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -38,13 +38,13 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 拦截 Controller 方法请求参数校验异常 ({@link com.sgqn.club.base.exception.ClubException})
+     * 拦截 Controller 方法请求参数校验异常 ({@link TopClubException})
      *
      * @param clubException 项目中自定义的异常
      * @return 返回异常响应
      */
-    @ExceptionHandler(value = ClubException.class)
-    public ResultBean<?> clubExceptionHandler(ClubException clubException) {
+    @ExceptionHandler(value = TopClubException.class)
+    public ResultBean<?> clubExceptionHandler(TopClubException clubException) {
         // 打印错误信息
         clubException.printStackTrace();
         return ResultBean.error(clubException.getMessage());

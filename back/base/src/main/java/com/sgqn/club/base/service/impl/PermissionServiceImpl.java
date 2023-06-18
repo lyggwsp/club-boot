@@ -2,12 +2,19 @@ package com.sgqn.club.base.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sgqn.club.base.dto.convert.permission.PermissionConvert;
+import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignUserClubRoleReq;
 import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.entity.SysRoleMenu;
+import com.sgqn.club.base.entity.SysUserRoleClub;
+import com.sgqn.club.base.exception.ClubException;
+import com.sgqn.club.base.exception.DepartmentException;
+import com.sgqn.club.base.exception.SysRoleException;
+import com.sgqn.club.base.exception.UserException;
+import com.sgqn.club.base.mapper.DepartmentMapper;
 import com.sgqn.club.base.mapper.SysRoleMenuMapper;
-import com.sgqn.club.base.service.PermissionService;
-import com.sgqn.club.base.service.SysMenuService;
-import com.sgqn.club.base.service.SysRoleService;
+import com.sgqn.club.base.mapper.SysUserRoleClubMapper;
+import com.sgqn.club.base.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +41,18 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
 
     @Autowired
     private SysRoleService sysRoleService;
+
+    @Autowired
+    private SysUserRoleClubMapper sysUserRoleClubMapper;
+
+    @Autowired
+    private SysUserService sysUserService;
+
+    @Autowired
+    private ClubService clubService;
+
+    @Autowired
+    private DepartmentMapper departmentMapper;
 
     /**
      * {@inheritDoc}
@@ -86,6 +105,67 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
         }
         if (!CollectionUtil.isEmpty(deleteMenuIds)) {
             sysRoleMenuMapper.deleteListByRoleIdAndMenuIds(roleId, deleteMenuIds);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param userId 用户编号
+     * @return
+     */
+    @Override
+    public Set<Long> getUserRoleIdListByUserId(Long userId) {
+        return sysUserRoleClubMapper.selectListByUserId(userId).stream()
+                .map(SysUserRoleClub::getId).filter(Objects::nonNull).collect(Collectors.toSet());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param userId 用户编号
+     * @param clubId 社团编号
+     * @param roleId 角色编号
+     */
+    @Override
+    public void assignUserClubRole(PermissionAssignUserClubRoleReq reqVo) {
+        // 校验用户、社团、角色是否存在
+        validateUserClubRole(reqVo.getUserId(),
+                reqVo.getClubId(), reqVo.getRoleId(), reqVo.getDeptId());
+        // 插入数据到数据
+        SysUserRoleClub sysUserRoleClub = PermissionConvert.req2do(reqVo);
+        sysUserRoleClubMapper.insert(sysUserRoleClub);
+    }
+
+
+    /**
+     * 校验赋予用户角色字段是否合法
+     * 1、用户必须存在
+     * 2、社团必须存在
+     * 3、角色必须存在
+     * 4、社团部门必须存在
+     *
+     * @param userId 用户编号
+     * @param clubId 社团编号
+     * @param roleId 角色编号
+     * @param deptId 部门编号
+     */
+    void validateUserClubRole(Long userId, Long clubId, Long roleId, Long deptId) {
+        // 校验用户编号
+        if (sysUserService.getById(userId) == null) {
+            throw UserException.USER_NOT_FOUND_EXCEPTION;
+        }
+        // 校验社团编号
+        if (clubService.getById(clubId) == null) {
+            throw ClubException.CLUB_NOT_FOUND_EXCEPTION;
+        }
+        // 校验角色编号
+        if (sysRoleService.getById(roleId) == null) {
+            throw SysRoleException.ROLE_NOT_FOUND_EXCEPTION;
+        }
+        // 校验部门
+        if (deptId != null && departmentMapper.selectByClubIdAndDepartId(clubId, deptId) == null) {
+            throw DepartmentException.DEPARTMENT_NOT_FOUND_EXCEPTION;
         }
     }
 }

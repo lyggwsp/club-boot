@@ -20,7 +20,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("赋予角色数据权限[PermissionAssignRoleDataScopeReq]")
+@ApiModel("赋予角色数据权限实体[PermissionAssignRoleDataScopeReq]")
 public class PermissionAssignRoleMenuReq {
 
     @ApiModelProperty(value = "角色编号", required = true, example = "1")

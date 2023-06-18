@@ -1,6 +1,7 @@
 package com.sgqn.club.base.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignUserClubRoleReq;
 import com.sgqn.club.base.entity.SysRoleMenu;
 
 import java.util.Set;
@@ -38,4 +39,18 @@ public interface PermissionService extends IService<SysRoleMenu> {
      * @param menuIds 菜单ID列表
      */
     void assignRoleMenu(Long roleId, Set<Long> menuIds);
+
+    /**
+     * 获得用户拥有的角色编号集合
+     *
+     * @param userId 用户编号
+     * @return 角色编号集合
+     */
+    Set<Long> getUserRoleIdListByUserId(Long userId);
+
+    /**
+     * 赋予用户-社团-角色
+     * @param permissionAssignUserClubRoleReq 赋予用户-社团-角色实体
+     */
+    void assignUserClubRole(PermissionAssignUserClubRoleReq permissionAssignUserClubRoleReq);
 }

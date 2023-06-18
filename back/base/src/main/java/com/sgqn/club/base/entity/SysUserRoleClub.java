@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.sgqn.club.base.bean.BaseEntity;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -47,19 +48,25 @@ public class SysUserRoleClub extends BaseEntity {
      * 加入时间
      */
     @TableField("join_time")
-    private Date joinTime;
+    private LocalDateTime joinTime;
 
     /**
      * 离开社团时间
      */
     @TableField("leave_time")
-    private Date leaveTime;
+    private LocalDateTime leaveTime;
 
     /**
      * 加入社团的部门编号
      */
     @TableField("dept_id")
     private Long deptId;
+
+    /**
+     * 加入到社团第几届
+     */
+    @TableField("num_session")
+    private Long numSession;
 
 
 }
