@@ -1,12 +1,12 @@
-package com.sgqn.club.base.convert.permission;
+package com.sgqn.club.base.dto.convert.permission;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.SysRoleTypeEnum;
-import com.sgqn.club.base.dto.req.SysRoleReq;
-import com.sgqn.club.base.dto.resp.SysRoleExcelResp;
-import com.sgqn.club.base.dto.resp.SysRoleResp;
+import com.sgqn.club.base.dto.req.permission.role.SysRoleReq;
+import com.sgqn.club.base.dto.resp.permission.SysRoleExcelResp;
+import com.sgqn.club.base.dto.resp.permission.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 
 import java.time.format.DateTimeFormatter;

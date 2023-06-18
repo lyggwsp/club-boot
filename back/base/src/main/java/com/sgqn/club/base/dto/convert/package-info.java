@@ -9,4 +9,4 @@
  * @author wspstart
  * @create 2023-06-13 12:59
  */
-package com.sgqn.club.base.convert;
+package com.sgqn.club.base.dto.convert;

@@ -1,4 +1,4 @@
-package com.sgqn.club.controller.permission.resp;
+package com.sgqn.club.base.dto.resp.permission;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,8 @@ public class SysRoleExcelResp {
 
     @ExcelProperty("角色名称")
     private String name;
-    @ExcelProperty("角色描述")
 
+    @ExcelProperty("角色描述")
     private String description;
 
     @ExcelProperty("角色标志")

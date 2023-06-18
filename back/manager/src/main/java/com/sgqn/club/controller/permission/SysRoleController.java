@@ -5,11 +5,11 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sgqn.club.base.bean.ResultBean;
-import com.sgqn.club.controller.permission.req.SysRoleCondition;
-import com.sgqn.club.base.convert.permission.SysRoleConvert;
-import com.sgqn.club.controller.permission.req.SysRoleReq;
-import com.sgqn.club.controller.permission.resp.SysRoleExcelResp;
-import com.sgqn.club.controller.permission.resp.SysRoleResp;
+import com.sgqn.club.base.dto.convert.permission.SysRoleConvert;
+import com.sgqn.club.base.dto.condition.SysRoleCondition;
+import com.sgqn.club.base.dto.req.permission.role.SysRoleReq;
+import com.sgqn.club.base.dto.resp.permission.SysRoleExcelResp;
+import com.sgqn.club.base.dto.resp.permission.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.service.SysRoleService;
@@ -50,7 +50,7 @@ public class SysRoleController {
         return ResultBean.success("删除成功");
     }
 
-    @GetMapping(value = "/export-role",produces = "application/vnd.ms-excel;charset=UTF-8")
+    @GetMapping(value = "/export-role", produces = "application/vnd.ms-excel;charset=UTF-8")
     @ApiOperation("导出角色信息")
     public void exportRoleInfo(HttpServletResponse response) throws IOException {
 

@@ -23,6 +23,7 @@ public class SysMenu extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    public static final Long ID_ROOT = 0L;
     /**
      * 菜单名称
      */
@@ -75,13 +76,13 @@ public class SysMenu extends BaseEntity {
      * 是否渲染菜单
      */
     @TableField("renderMenu")
-    private String renderMenu;
+    private Boolean renderMenu;
 
     /**
      * 是否开启缓存
      */
     @TableField("cacheable")
-    private String cacheable;
+    private Boolean cacheable;
 
     /**
      * 权限标识
@@ -100,7 +101,7 @@ public class SysMenu extends BaseEntity {
      * 页面是否可关闭
      */
     @TableField("closeable")
-    private String closeable;
+    private Boolean closeable;
 
     /**
      * 父菜单标签

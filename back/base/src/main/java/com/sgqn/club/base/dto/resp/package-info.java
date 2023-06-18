@@ -3,4 +3,4 @@
  * @author wspstart
  * @create 2023-06-18 8:46
  */
-package com.sgqn.club.controller.permission.resp;
+package com.sgqn.club.base.dto.resp;

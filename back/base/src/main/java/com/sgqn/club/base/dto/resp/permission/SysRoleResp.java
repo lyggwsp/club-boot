@@ -1,4 +1,4 @@
-package com.sgqn.club.controller.permission.resp;
+package com.sgqn.club.base.dto.resp.permission;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;

@@ -1,4 +1,4 @@
-package com.sgqn.club.controller.permission.req;
+package com.sgqn.club.base.dto.condition;
 
 import com.sgqn.club.base.bean.PageCondition;
 import com.sgqn.club.base.entity.SysRole;
