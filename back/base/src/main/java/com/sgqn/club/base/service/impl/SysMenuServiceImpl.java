@@ -2,6 +2,7 @@ package com.sgqn.club.base.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.constant.SysMenuTypeEnum;
+import com.sgqn.club.base.dto.condition.SysMenuCondition;
 import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.exception.SysMenuException;
 import com.sgqn.club.base.mapper.SysMenuMapper;
@@ -92,25 +93,21 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         permissionService.processMenuDeleted(id);
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
     @Override
     public List<SysMenu> getMenuList() {
         return null;
     }
 
+
     /**
      * {@inheritDoc}
      *
-     * @param sysMenu 筛选条件请求 VO
+     * @param sysMenuCondition 筛选条件请求 VO
      * @return
      */
     @Override
-    public List<SysMenu> getMenuList(SysMenu sysMenu) {
-        return null;
+    public List<SysMenu> getMenuList(SysMenuCondition sysMenuCondition) {
+        return sysMenuMapper.selectList(sysMenuCondition);
     }
 
 
@@ -158,7 +155,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      */
     @Override
     public SysMenu getMenu(Long id) {
-        return null;
+        return this.getById(id);
     }
 
 

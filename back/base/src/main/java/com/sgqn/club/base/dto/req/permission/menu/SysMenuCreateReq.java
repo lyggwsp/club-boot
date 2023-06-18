@@ -8,9 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 /**
  * @author wspstart
@@ -76,4 +74,9 @@ public class SysMenuCreateReq {
     @ApiModelProperty(value = "显示排序", required = true, example = "1024")
     @NotNull(groups = ValidGroup.Insert.class, message = "显示排序不能为空")
     private Integer sort;
+
+    @ApiModelProperty(value = "状态([ 新增 ] 时必填项)", allowableValues = "0,1")
+    @Min(value = 0, groups = ValidGroup.Insert.class, message = "状态值必须为0或1")
+    @Max(value = 1, groups = ValidGroup.Insert.class, message = "状态值必须为0或1")
+    private Integer status;
 }

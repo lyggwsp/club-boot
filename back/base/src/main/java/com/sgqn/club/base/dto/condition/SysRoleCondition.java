@@ -2,6 +2,7 @@ package com.sgqn.club.base.dto.condition;
 
 import com.sgqn.club.base.bean.PageCondition;
 import com.sgqn.club.base.entity.SysRole;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ApiModel("角色条件查询[SysRoleCondition]")
 public class SysRoleCondition extends PageCondition<SysRole> {
 
     @ApiModelProperty("角色名称")

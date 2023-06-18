@@ -1,6 +1,8 @@
 package com.sgqn.club.controller.permission;
 
 import com.sgqn.club.base.bean.ResultBean;
+import com.sgqn.club.base.constant.CommonStatusEnum;
+import com.sgqn.club.base.dto.condition.SysMenuCondition;
 import com.sgqn.club.base.dto.convert.permission.SysMenuConvert;
 import com.sgqn.club.base.dto.req.permission.menu.SysMenuCreateReq;
 import com.sgqn.club.base.dto.req.permission.menu.SysMenuUpdateReq;
@@ -13,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * <p>
  * 前端控制器
@@ -23,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/sys-menu")
-@Api(tags = "系统菜单控制器[sys-menu]")
+@Api(tags = "管理后台 - 权限[sys-menu]")
 public class SysMenuController {
 
 
@@ -57,20 +62,35 @@ public class SysMenuController {
 
     @GetMapping("/list")
     @ApiOperation("获取菜单列表[getMenuList]")
-    public ResultBean<?> getMenuList() {
-        return ResultBean.error("功能待实现");
+    public ResultBean<?> getMenuList(SysMenuCondition sysMenuCondition) {
+        List<SysMenu> menuList = sysMenuService.getMenuList(sysMenuCondition);
+        if (!menuList.isEmpty()) {
+            menuList.sort(Comparator.comparing(SysMenu::getSort));
+            return ResultBean.success("获取信息成功", menuList);
+        }
+        return ResultBean.error("暂无记录");
     }
 
     @GetMapping("/list-all-simple")
     @ApiOperation("获取菜单精简信息列表[getSimpleMenuList]")
     public ResultBean<?> getSimpleMenuList() {
-        return ResultBean.error("功能待实现");
+        // 获取菜单列表，只要求开启状态
+        SysMenuCondition menuCondition = SysMenuCondition.builder()
+                .status(CommonStatusEnum.ENABLE.getType()).build();
+        List<SysMenu> menuList = sysMenuService.getMenuList(menuCondition);
+        if (!menuList.isEmpty()) {
+            menuList.sort(Comparator.comparing(SysMenu::getSort));
+            return ResultBean.success("获取信息成功",
+                    SysMenuConvert.do2resp(menuList));
+        }
+        return ResultBean.error("暂无记录");
     }
 
     @GetMapping("/get")
     @ApiOperation("根据ID获取菜单信息")
-    public ResultBean<?> getMenu() {
-        return ResultBean.error("功能待实现");
+    public ResultBean<?> getMenu(Long id) {
+        SysMenu menu = sysMenuService.getMenu(id);
+        return ResultBean.success("获取信息成功", menu);
     }
 
 }

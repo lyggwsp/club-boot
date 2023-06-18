@@ -1,9 +1,13 @@
 package com.sgqn.club.base.mapper;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.sgqn.club.base.dto.condition.SysMenuCondition;
 import com.sgqn.club.base.entity.SysMenu;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -38,4 +42,14 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
         return selectCount(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, parentId));
     }
 
+    default List<SysMenu> selectList(SysMenuCondition sysMenuCondition) {
+        LambdaQueryWrapper<SysMenu> queryWrapper = new LambdaQueryWrapper<>();
+        if (!StrUtil.isEmptyIfStr(sysMenuCondition.getName())) {
+            queryWrapper.like(SysMenu::getName, sysMenuCondition.getName());
+        }
+        if (!StrUtil.isBlankIfStr(sysMenuCondition.getStatus())) {
+            queryWrapper.eq(SysMenu::getStatus, sysMenuCondition.getStatus());
+        }
+        return selectList(queryWrapper);
+    }
 }

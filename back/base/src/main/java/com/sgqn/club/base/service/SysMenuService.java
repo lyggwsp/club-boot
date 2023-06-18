@@ -1,6 +1,7 @@
 package com.sgqn.club.base.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sgqn.club.base.dto.condition.SysMenuCondition;
 import com.sgqn.club.base.entity.SysMenu;
 
 import java.util.Collection;
@@ -50,10 +51,10 @@ public interface SysMenuService extends IService<SysMenu> {
     /**
      * 筛选菜单列表
      *
-     * @param sysMenu 筛选条件请求 VO
+     * @param sysMenuCondition 筛选条件请求 VO
      * @return 菜单列表
      */
-    List<SysMenu> getMenuList(SysMenu sysMenu);
+    List<SysMenu> getMenuList(SysMenuCondition sysMenuCondition);
 
     /**
      * 获得所有菜单

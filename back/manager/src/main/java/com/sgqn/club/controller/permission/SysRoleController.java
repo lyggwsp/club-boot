@@ -36,7 +36,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys-role")
-@Api(tags = "系统角色控制器[sys-role]")
+@Api(tags = "管理后台 - 权限[sys-role]")
 public class SysRoleController {
 
     @Autowired

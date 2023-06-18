@@ -21,9 +21,8 @@ import lombok.*;
 @TableName("sys_menu")
 public class SysMenu extends BaseEntity {
 
-    private static final long serialVersionUID = 1L;
-
     public static final Long ID_ROOT = 0L;
+    private static final long serialVersionUID = 1L;
     /**
      * 菜单名称
      */
@@ -114,6 +113,14 @@ public class SysMenu extends BaseEntity {
      */
     @TableField("sort")
     private Integer sort;
+
+    /**
+     * 状态
+     * <p>
+     * {@link com.sgqn.club.base.constant.CommonStatusEnum}
+     */
+    @TableField("status")
+    private Integer status;
 
 
 }
