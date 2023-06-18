@@ -1,15 +1,15 @@
-package com.sgqn.club.controller;
+package com.sgqn.club.controller.permission;
 
 import cn.hutool.core.lang.Opt;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sgqn.club.base.bean.ResultBean;
-import com.sgqn.club.base.dto.condition.SysRoleCondition;
-import com.sgqn.club.base.dto.convert.SysRoleConvert;
-import com.sgqn.club.base.dto.req.SysRoleReq;
-import com.sgqn.club.base.dto.resp.SysRoleExcelResp;
-import com.sgqn.club.base.dto.resp.SysRoleResp;
+import com.sgqn.club.controller.permission.req.SysRoleCondition;
+import com.sgqn.club.base.convert.permission.SysRoleConvert;
+import com.sgqn.club.controller.permission.req.SysRoleReq;
+import com.sgqn.club.controller.permission.resp.SysRoleExcelResp;
+import com.sgqn.club.controller.permission.resp.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.service.SysRoleService;

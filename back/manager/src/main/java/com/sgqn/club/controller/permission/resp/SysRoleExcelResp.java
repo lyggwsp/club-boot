@@ -1,4 +1,4 @@
-package com.sgqn.club.base.dto.resp;
+package com.sgqn.club.controller.permission.resp;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;

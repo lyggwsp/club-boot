@@ -7,7 +7,6 @@ import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.dto.resp.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**

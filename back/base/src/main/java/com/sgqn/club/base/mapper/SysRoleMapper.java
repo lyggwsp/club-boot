@@ -8,8 +8,6 @@ import com.sgqn.club.base.entity.SysRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-
 /**
  * <p>
  * Mapper 接口

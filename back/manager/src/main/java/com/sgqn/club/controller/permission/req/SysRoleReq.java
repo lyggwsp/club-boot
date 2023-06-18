@@ -1,4 +1,4 @@
-package com.sgqn.club.base.dto.req;
+package com.sgqn.club.controller.permission.req;
 
 
 import com.sgqn.club.base.validation.ValidGroup;

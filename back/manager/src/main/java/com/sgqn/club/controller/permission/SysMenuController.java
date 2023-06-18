@@ -1,4 +1,4 @@
-package com.sgqn.club.controller;
+package com.sgqn.club.controller.permission;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

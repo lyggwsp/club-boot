@@ -1,4 +1,4 @@
-package com.sgqn.club.base.dto.convert;
+package com.sgqn.club.base.convert.permission;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
