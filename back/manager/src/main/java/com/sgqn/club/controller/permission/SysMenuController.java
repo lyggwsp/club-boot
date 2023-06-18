@@ -28,7 +28,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sys-menu")
-@Api(tags = "管理后台 - 权限[sys-menu]")
+@Api(tags = "管理后台 - 菜单[sys-menu]")
 public class SysMenuController {
 
 

@@ -3,6 +3,8 @@ package com.sgqn.club.base.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sgqn.club.base.entity.SysRoleMenu;
 
+import java.util.Set;
+
 /**
  * <p>
  * 权限（角色菜单）的 服务类
@@ -20,4 +22,12 @@ public interface PermissionService extends IService<SysRoleMenu> {
      * @param menuId 菜单编号
      */
     void processMenuDeleted(Long menuId);
+
+    /**
+     * 获取角色拥有的菜单
+     *
+     * @param roleId 角色Id
+     * @return 返回角色拥有的菜单列表
+     */
+    Set<Long> getRoleMenuIds(Long roleId);
 }

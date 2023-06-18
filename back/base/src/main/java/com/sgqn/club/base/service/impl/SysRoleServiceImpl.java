@@ -1,5 +1,6 @@
 package com.sgqn.club.base.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,7 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -137,9 +141,43 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return this.save(sysRole);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return
+     */
     @Override
     public List<SysRole> getRoleList() {
         return sysRoleMapper.selectList(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param roleList 角色数组
+     * @return
+     */
+    @Override
+    public boolean hasAnySuperAdmin(Collection<SysRole> roleList) {
+        if (CollectionUtil.isEmpty(roleList)) {
+            return false;
+        }
+        return getRoleList().stream().anyMatch(role -> SysRoleCodeEnum.isSuperAdmin(role.getCode()));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param ids 角色编号数组
+     * @return
+     */
+    @Override
+    public List<SysRole> getRoleList(Collection<Long> ids) {
+        if (CollectionUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return getRoleList().stream().filter(role -> ids.contains(role.getId()))
+                .collect(Collectors.toList());
     }
 
 

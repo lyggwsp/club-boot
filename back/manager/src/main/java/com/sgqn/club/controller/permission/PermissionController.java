@@ -1,12 +1,13 @@
 package com.sgqn.club.controller.permission;
 
 import com.sgqn.club.base.bean.ResultBean;
+import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignRoleMenuReq;
+import com.sgqn.club.base.service.PermissionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -22,15 +23,20 @@ import java.util.Set;
 @Api(tags = "管理后台 - 权限[role-menu]")
 public class PermissionController {
 
-    @GetMapping("/list-role-resources")
+    @Autowired
+    private PermissionService permissionService;
+
+    @GetMapping("/list-role-resources/{id}")
+    @Parameter(name = "roleId", description = "角色编号", required = true)
     @ApiOperation("获取角色拥有的菜单编号[listRoleMenu]")
-    public ResultBean<Set<Long>> listRoleMenu(Long roleId) {
-        return ResultBean.error("功能待实现");
+    public ResultBean<Set<Long>> listRoleMenu(@PathVariable("id") Long roleId) {
+        return ResultBean.success("获取信息成功",
+                permissionService.getRoleMenuIds(roleId));
     }
 
     @PostMapping("/assign-role-menu")
     @ApiOperation("赋予角色菜单[assignRoleMenu]")
-    public ResultBean<?> assignRoleMenu() {
+    public ResultBean<?> assignRoleMenu(@RequestBody PermissionAssignRoleMenuReq permissionAssignRoleMenuReq) {
         return ResultBean.error("功能待实现");
     }
 
@@ -40,7 +46,7 @@ public class PermissionController {
         return ResultBean.error("功能待实现");
     }
 
-    @PostMapping("/list-user-roles")
+    @GetMapping("/list-user-roles")
     @ApiOperation("获取管理员拥有的角色编号[assignRoleDataScope]")
     public ResultBean<?> listAdminRoles() {
         return ResultBean.error("功能待实现");

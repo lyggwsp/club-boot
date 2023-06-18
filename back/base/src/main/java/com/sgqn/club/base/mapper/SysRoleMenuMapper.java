@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * <p>
  * Mapper 接口
@@ -23,5 +25,10 @@ public interface SysRoleMenuMapper extends BaseMapper<SysRoleMenu> {
      */
     default void deleteListByMenuId(Long menuId) {
         this.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getMenuId, menuId));
+    }
+
+    default List<SysRoleMenu> selectListByRoleId(Long roleId){
+        this.selectList(new LambdaQueryWrapper<SysRoleMenu>()
+                .eq(SysRoleMenu::getRoleId,roleId));
     }
 }

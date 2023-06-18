@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.entity.SysRole;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -75,5 +77,31 @@ public interface SysRoleService extends IService<SysRole> {
      */
     List<SysRole> getRoleList();
 
+
+    /**
+     * 判断角色编号数组中，是否有管理员
+     *
+     * @param ids 角色编号数组
+     * @return 是否有管理员
+     */
+    default boolean hasAnySuperAdmin(Set<Long> ids) {
+        return hasAnySuperAdmin(getRoleList(ids));
+    }
+
+    /**
+     * 判断角色数组中，是否有超级管理员
+     *
+     * @param roleList 角色数组
+     * @return 是否有管理员
+     */
+    boolean hasAnySuperAdmin(Collection<SysRole> roleList);
+
+    /**
+     * 获得角色数组
+     *
+     * @param ids 角色编号数组
+     * @return 角色数组
+     */
+    List<SysRole> getRoleList(Collection<Long> ids);
 
 }
