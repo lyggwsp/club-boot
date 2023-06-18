@@ -50,8 +50,9 @@ public class SysMenuController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除菜单[deleteMenu]")
-    public ResultBean<?> deleteMenu() {
-        return ResultBean.error("功能待实现");
+    public ResultBean<?> deleteMenu(@RequestHeader("X-Menu-Id") Long id) {
+        sysMenuService.deleteMenu(id);
+        return ResultBean.success("删除菜单成功");
     }
 
     @GetMapping("/list")

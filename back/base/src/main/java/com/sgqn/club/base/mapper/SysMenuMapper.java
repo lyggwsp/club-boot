@@ -28,4 +28,14 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
                 .eq(SysMenu::getParentId, parentId).eq(SysMenu::getName, name));
     }
 
+    /**
+     * 根据父菜单编号查询是否还有子菜单
+     *
+     * @param parentId 父菜单编号
+     * @return 返回几条子菜单记录
+     */
+    default Long selectCountByParentId(Long parentId) {
+        return selectCount(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, parentId));
+    }
+
 }

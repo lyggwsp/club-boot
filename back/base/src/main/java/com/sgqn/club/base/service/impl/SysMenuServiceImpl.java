@@ -5,6 +5,7 @@ import com.sgqn.club.base.constant.SysMenuTypeEnum;
 import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.exception.SysMenuException;
 import com.sgqn.club.base.mapper.SysMenuMapper;
+import com.sgqn.club.base.service.PermissionService;
 import com.sgqn.club.base.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,10 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Autowired
     private SysMenuMapper sysMenuMapper;
+
+
+    @Autowired
+    private PermissionService permissionService;
 
     /**
      * {@inheritDoc}
@@ -54,13 +59,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public void updateMenu(SysMenu sysMenu) {
         // 1、校验菜单是否存在
-        if (this.getById(sysMenu.getId()) == null){
+        if (this.getById(sysMenu.getId()) == null) {
             throw SysMenuException.MENU_NOT_EXISTS;
         }
         // 2、校验父菜单是否存在
-        validateParentMenu(sysMenu.getParentId(),sysMenu.getId());
+        validateParentMenu(sysMenu.getParentId(), sysMenu.getId());
         // 3、 校验自己
-        validateMenu(sysMenu.getParentId(),sysMenu.getName(),sysMenu.getId());
+        validateMenu(sysMenu.getParentId(), sysMenu.getName(), sysMenu.getId());
         // 4、更新到数据库
         this.updateById(sysMenu);
     }
@@ -73,7 +78,18 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      */
     @Override
     public void deleteMenu(Long id) {
-
+        // 1、校验是否还有子菜单
+        if (sysMenuMapper.selectCountByParentId(id) > 0) {
+            throw SysMenuException.MENU_EXISTS_CHILDREN;
+        }
+        //2、校验删除的菜单是否存在
+        if (this.getById(id) == null) {
+            throw SysMenuException.MENU_NOT_EXISTS;
+        }
+        //3、删除菜单信息
+        this.removeById(id);
+        //4、删除授予给角色的权限
+        permissionService.processMenuDeleted(id);
     }
 
     /**

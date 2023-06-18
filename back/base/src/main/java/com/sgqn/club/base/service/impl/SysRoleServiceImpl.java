@@ -16,7 +16,7 @@ import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.mapper.SysRoleMapper;
-import com.sgqn.club.base.service.SysRoleMenuService;
+import com.sgqn.club.base.service.PermissionService;
 import com.sgqn.club.base.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     private SysRoleMapper sysRoleMapper;
 
     @Autowired
-    private SysRoleMenuService sysRoleMenuService;
+    private PermissionService sysRoleMenuService;
 
 
     /**
