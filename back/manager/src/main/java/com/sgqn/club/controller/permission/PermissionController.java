@@ -37,13 +37,9 @@ public class PermissionController {
     @PostMapping("/assign-role-menu")
     @ApiOperation("赋予角色菜单[assignRoleMenu]")
     public ResultBean<?> assignRoleMenu(@RequestBody PermissionAssignRoleMenuReq permissionAssignRoleMenuReq) {
-        return ResultBean.error("功能待实现");
-    }
-
-    @PostMapping("/assign-role-data-scope")
-    @ApiOperation("赋予角色数据权限[assignRoleDataScope]")
-    public ResultBean<?> assignRoleDataScope() {
-        return ResultBean.error("功能待实现");
+        permissionService.assignRoleMenu(permissionAssignRoleMenuReq.getRoleId(),
+                permissionAssignRoleMenuReq.getMenuIds());
+        return ResultBean.error("赋予角色菜单成功");
     }
 
     @GetMapping("/list-user-roles")
