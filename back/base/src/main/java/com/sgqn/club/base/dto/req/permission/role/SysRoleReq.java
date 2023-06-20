@@ -34,8 +34,7 @@ public class SysRoleReq {
     @NotBlank(groups = ValidGroup.Insert.class, message = " 角色名称不能为空 ")
     private String name;
 
-    @ApiModelProperty("角色备注([ 新增 ] 时必填项)")
-    @NotBlank(groups = ValidGroup.Insert.class, message = " 描述不能为空 ")
+    @ApiModelProperty("角色备注([ 新增 ] 时选填项)")
     private String description;
 
     @ApiModelProperty("排序([ 新增 ] 时必填项)")
@@ -45,7 +44,7 @@ public class SysRoleReq {
     private Integer sort;
 
     @ApiModelProperty("code([ 新增  ] 时必填项)")
-    @Pattern(groups = {ValidGroup.Insert.class, ValidGroup.Update.class}, regexp = "^[a-zA-Z._]+$", message = " 角色代码必须是中文 ")
+    @Pattern(groups = {ValidGroup.Insert.class, ValidGroup.Update.class}, regexp = "^[a-zA-Z._]+$", message = " 角色代码必须是英文 ")
     @NotBlank(groups = ValidGroup.Insert.class, message = " 角色代码不能为空 ")
     private String code;
 

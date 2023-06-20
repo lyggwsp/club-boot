@@ -8,16 +8,18 @@
     <select id="selectByCondition" parameterType="sysRoleCondition" resultType="sysRole">
         SELECT id, name, description, sort, code, type, status, create_time
         FROM db_club.sys_role
-        <trim prefix="WHERE" prefixOverrides="OR">
-            <if test="condition.name != null">name LIKE CONCAT('%', #{condition.name}, '%')</if>
-            <if test="condition.code != null">OR code LIKE CONCAT('%', #{condition.code}, '%')</if>
-            <if test="condition.status != null">OR `status`= #{condition.status}</if>
-            <if test="condition.startTime != null and condition.endTime == null">OR create_time
+        <trim prefix="WHERE" prefixOverrides="AND">
+            1 = 1
+            <if test="condition.name != null">AND name LIKE CONCAT('%', #{condition.name}, '%')</if>
+            <if test="condition.code != null">AND code LIKE CONCAT('%', #{condition.code}, '%')</if>
+            <if test="condition.status != null">AND `status`= #{condition.status}</if>
+            <if test="condition.startTime != null and condition.endTime == null">AND create_time
                 <![CDATA[>=]]> #{condition.startTime}
             </if>
-            <if test="condition.startTime != null and condition.endTime != null">OR create_time BETWEEN
+            <if test="condition.startTime != null and condition.endTime != null">AND create_time BETWEEN
                 #{condition.startTime} AND #{condition.endTime}
             </if>
+            AND deleted = 0
         </trim>
     </select>
 

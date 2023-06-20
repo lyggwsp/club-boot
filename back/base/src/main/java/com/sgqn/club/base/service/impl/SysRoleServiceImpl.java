@@ -162,7 +162,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (CollectionUtil.isEmpty(roleList)) {
             return false;
         }
-        return getRoleList().stream().anyMatch(role -> SysRoleCodeEnum.isSuperAdmin(role.getCode()));
+        return roleList.stream().anyMatch(role -> SysRoleCodeEnum.isSuperAdmin(role.getCode()));
     }
 
     /**
@@ -176,8 +176,10 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (CollectionUtil.isEmpty(ids)) {
             return Collections.emptyList();
         }
-        return getRoleList().stream().filter(role -> ids.contains(role.getId()))
+        List<SysRole> roleList = getRoleList();
+        List<SysRole> collect = roleList.stream().filter(role -> ids.contains(role.getId()))
                 .collect(Collectors.toList());
+        return collect;
     }
 
 

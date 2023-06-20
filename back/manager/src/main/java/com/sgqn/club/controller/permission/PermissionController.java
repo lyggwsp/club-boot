@@ -32,7 +32,7 @@ public class PermissionController {
     @GetMapping("/list-role-resources/{id}")
     @Parameter(name = "roleId", description = "角色编号", required = true)
     @ApiOperation("获取角色拥有的菜单编号[listRoleMenu]")
-    public ResultBean<Set<Long>> listRoleMenu(@PathVariable("id") Long roleId) {
+    public ResultBean<Set<String>> listRoleMenu(@PathVariable("id") Long roleId) {
         return ResultBean.success("信息获取成功",
                 permissionService.getRoleMenuIds(roleId));
     }

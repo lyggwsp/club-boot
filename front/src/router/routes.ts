@@ -46,6 +46,17 @@ const routes: RouteRecordRaw[] = [
                 },
                 component: () => import('@/pages/system/role/index'),
             },
+            {
+                path: '/menu',
+                name: '菜单管理',
+                meta: {
+                    icon: 'LoginOutlined',
+                    target: '_self',
+                    cacheable: true,
+                    renderMenu: true
+                },
+                component: () => import('@/pages/system/menu/index'),
+            },
         ]
     },
     /* {

@@ -95,7 +95,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
     @Override
     public List<SysMenu> getMenuList() {
-        return null;
+        return this.getMenuList(SysMenuCondition.builder().build());
     }
 
 
@@ -160,11 +160,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
 
 
     /**
-     * 校验父菜单是否合法
+     * 校验父菜单是否合法<br></br>
      * <p>
-     * 1、不能设置自己为父菜单
-     * 2、父菜单不存在
-     * 3、父菜单必须是菜单类型
+     * 1、不能设置自己为父菜单<br></br>
+     * 2、父菜单不存在<br></br>
+     * 3、父菜单必须是菜单类型<br></br>
      *
      * @param parentId 父菜单编号
      * @param childId  当前菜单编号
@@ -191,7 +191,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     /**
-     * 校验菜单是否合法
+     * 校验菜单是否合法<br/>
      * 1、校验相同父菜单编号下，是否存在相同的菜单名
      *
      * @param parentId 父菜单编号

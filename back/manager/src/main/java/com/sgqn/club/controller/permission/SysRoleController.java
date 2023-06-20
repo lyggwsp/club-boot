@@ -5,8 +5,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sgqn.club.base.bean.ResultBean;
-import com.sgqn.club.base.dto.convert.permission.SysRoleConvert;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
+import com.sgqn.club.base.dto.convert.permission.SysRoleConvert;
 import com.sgqn.club.base.dto.req.permission.role.SysRoleReq;
 import com.sgqn.club.base.dto.resp.permission.SysRoleExcelResp;
 import com.sgqn.club.base.dto.resp.permission.SysRoleResp;
@@ -50,13 +50,13 @@ public class SysRoleController {
         return ResultBean.success("删除成功");
     }
 
-    @GetMapping(value = "/export-role", produces = "application/vnd.ms-excel;charset=UTF-8")
+    @GetMapping(value = "/export-role")
     @ApiOperation("导出角色信息")
     public void exportRoleInfo(HttpServletResponse response) throws IOException {
 
         List<SysRoleExcelResp> data = SysRoleConvert.do2resp(sysRoleService.getRoleList());
         // 输出
-        ExcelUtils.write(response, "role_data.xls", "角色列表", SysRoleExcelResp.class, data);
+        ExcelUtils.write(response, "角色列表.xls", "角色列表", SysRoleExcelResp.class, data);
 
     }
 
@@ -104,7 +104,7 @@ public class SysRoleController {
     }
 
 
-    @PostMapping("/save")
+    @PostMapping(value = "/save")
     @ApiOperation("新增[save]")
     public ResultBean<String> save(
             @RequestBody @Validated({ValidGroup.Insert.class}) SysRoleReq sysRoleReq) {

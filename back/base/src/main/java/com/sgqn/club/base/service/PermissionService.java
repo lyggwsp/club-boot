@@ -30,7 +30,7 @@ public interface PermissionService extends IService<SysRoleMenu> {
      * @param roleId 角色Id
      * @return 返回角色拥有的菜单列表
      */
-    Set<Long> getRoleMenuIds(Long roleId);
+    Set<String> getRoleMenuIds(Long roleId);
 
     /**
      * 给角色分配菜单

@@ -19,13 +19,16 @@ import lombok.NoArgsConstructor;
 @ApiModel("系统菜单精简实体[SysMenuSimpleResp]")
 public class SysMenuSimpleResp {
     @ApiModelProperty(value = "菜单编号", required = true, example = "1024")
-    private Long id;
+    private String id;
 
     @ApiModelProperty(value = "菜单名称", required = true, example = "芋道")
     private String name;
 
+    @ApiModelProperty(value = "菜单页面标题", required = true, example = "芋道")
+    private String title;
+
     @ApiModelProperty(value = "父菜单 ID", required = true, example = "1024")
-    private Long parentId;
+    private String parentId;
 
     @ApiModelProperty(value = "类型，参见 MenuTypeEnum 枚举类", required = true, example = "1")
     private Integer menuType;

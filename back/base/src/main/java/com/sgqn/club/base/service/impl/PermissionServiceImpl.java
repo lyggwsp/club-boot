@@ -2,9 +2,11 @@ package com.sgqn.club.base.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.dto.convert.permission.PermissionConvert;
 import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignUserClubRoleReq;
 import com.sgqn.club.base.entity.SysMenu;
+import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.entity.SysUserRoleClub;
 import com.sgqn.club.base.exception.ClubException;
@@ -71,16 +73,22 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
      * @return
      */
     @Override
-    public Set<Long> getRoleMenuIds(Long roleId) {
+    public Set<String> getRoleMenuIds(Long roleId) {
+        if (sysRoleService.getById(roleId) == null) {
+            throw SysRoleException.ROLE_NOT_FOUND_EXCEPTION;
+        }
         // 如果是管理员的情况下，获取全部菜单编号
         if (sysRoleService.hasAnySuperAdmin(Collections.singleton(roleId))) {
             return sysMenuService.getMenuList().stream()
-                    .map(SysMenu::getId).filter(Objects::nonNull).collect(Collectors.toSet());
+                    .map(menu -> String.valueOf(menu.getId()))
+                    .filter(Objects::nonNull).collect(Collectors.toSet());
         }
         // 如果是非管理员的情况下，获得拥有的菜单编号
         return sysRoleMenuMapper.selectListByRoleId(roleId).stream()
-                .map(SysRoleMenu::getId).filter(Objects::nonNull).collect(Collectors.toSet());
+                .map(roleMenu -> String.valueOf(roleMenu.getMenuId()))
+                .filter(Objects::nonNull).collect(Collectors.toSet());
     }
+
 
     /**
      * {@inheritDoc}
@@ -93,7 +101,7 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
     public void assignRoleMenu(Long roleId, Set<Long> menuIds) {
         // 1、获取角色拥有的菜单
         Set<Long> dbMenuIds = sysRoleMenuMapper.selectListByRoleId(roleId).stream()
-                .map(SysRoleMenu::getId).filter(Objects::nonNull).collect(Collectors.toSet());
+                .map(SysRoleMenu::getMenuId).filter(Objects::nonNull).collect(Collectors.toSet());
         // 2、计算新增和删除的菜单编号
         Collection<Long> createMenuIds = CollectionUtil.subtract(menuIds, dbMenuIds);
         Collection<Long> deleteMenuIds = CollectionUtil.subtract(dbMenuIds, menuIds);
@@ -116,16 +124,18 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
      */
     @Override
     public Set<Long> getUserRoleIdListByUserId(Long userId) {
+        if (sysUserService.getById(userId) == null) {
+            throw UserException.USER_NOT_FOUND_EXCEPTION;
+        }
         return sysUserRoleClubMapper.selectListByUserId(userId).stream()
                 .map(SysUserRoleClub::getId).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
+
     /**
      * {@inheritDoc}
      *
-     * @param userId 用户编号
-     * @param clubId 社团编号
-     * @param roleId 角色编号
+     * @param reqVo 赋予用户-社团-角色实体
      */
     @Override
     public void assignUserClubRole(PermissionAssignUserClubRoleReq reqVo) {
@@ -160,8 +170,12 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
             throw ClubException.CLUB_NOT_FOUND_EXCEPTION;
         }
         // 校验角色编号
-        if (sysRoleService.getById(roleId) == null) {
+        SysRole sysRole = sysRoleService.getById(roleId);
+        if (sysRole == null) {
             throw SysRoleException.ROLE_NOT_FOUND_EXCEPTION;
+        }
+        if (sysRole.getStatus().equals(CommonStatusEnum.DISABLE.getType())) {
+            throw SysRoleException.ROLE_IS_DISABLED;
         }
         // 校验部门
         if (deptId != null && departmentMapper.selectByClubIdAndDepartId(clubId, deptId) == null) {
