@@ -6,6 +6,7 @@ import com.sgqn.club.base.dto.condition.SysMenuCondition;
 import com.sgqn.club.base.dto.convert.permission.SysMenuConvert;
 import com.sgqn.club.base.dto.req.permission.menu.SysMenuCreateReq;
 import com.sgqn.club.base.dto.req.permission.menu.SysMenuUpdateReq;
+import com.sgqn.club.base.dto.resp.permission.SysMenuResp;
 import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.service.SysMenuService;
 import com.sgqn.club.base.validation.ValidGroup;
@@ -47,7 +48,7 @@ public class SysMenuController {
 
     @PutMapping("/update")
     @ApiOperation("修改菜单[updateMenu]")
-    public ResultBean<?> updateMenu(SysMenuUpdateReq sysMenuUpdateReq) {
+    public ResultBean<?> updateMenu(@RequestBody SysMenuUpdateReq sysMenuUpdateReq) {
         SysMenu sysMenu = SysMenuConvert.req2do(sysMenuUpdateReq);
         sysMenuService.updateMenu(sysMenu);
         return ResultBean.success("更新菜单成功");
@@ -65,8 +66,9 @@ public class SysMenuController {
     public ResultBean<?> getMenuList(SysMenuCondition sysMenuCondition) {
         List<SysMenu> menuList = sysMenuService.getMenuList(sysMenuCondition);
         if (!menuList.isEmpty()) {
-            menuList.sort(Comparator.comparing(SysMenu::getSort));
-            return ResultBean.success("获取信息成功", menuList);
+            List<SysMenuResp> sysMenuResps = SysMenuConvert.do2resp02(menuList);
+            sysMenuResps.sort(Comparator.comparing(SysMenuResp::getSort));
+            return ResultBean.success("获取信息成功",sysMenuResps);
         }
         return ResultBean.error("暂无记录");
     }

@@ -32,4 +32,8 @@ public class SysMenuConvert {
     public static List<SysMenuSimpleResp> do2resp(List<SysMenu> menuList) {
         return BeanUtil.copyToList(menuList, SysMenuSimpleResp.class);
     }
+
+    public static List<SysMenuResp> do2resp02(List<SysMenu> menuList) {
+        return BeanUtil.copyToList(menuList, SysMenuResp.class);
+    }
 }

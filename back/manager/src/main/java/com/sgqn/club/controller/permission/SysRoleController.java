@@ -64,9 +64,9 @@ public class SysRoleController {
     @ApiOperation("更新角色状态[updateStatus]")
     public ResultBean<?> updateStatus(@RequestParam @ApiParam(name = "角色ID", required = true) Long id,
                                       @RequestParam @ApiParam(name = "是否启用", required = true) Boolean disabled) {
-        boolean updateRoleStatus = sysRoleService.updateRoleStatus(id, disabled);
-        return updateRoleStatus ? ResultBean.success("更新成功")
-                : ResultBean.error("服务器异常，更新状态失败!");
+        sysRoleService.updateRoleStatus(id, disabled);
+        return ResultBean.success("更新成功");
+
     }
 
     @PutMapping("/update")
@@ -74,9 +74,9 @@ public class SysRoleController {
     public ResultBean<?> update(
             @RequestBody @Validated({ValidGroup.Update.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
-        boolean update = sysRoleService.updateRole(sysRole);
-        return update ? ResultBean.success("更新成功！")
-                : ResultBean.error("服务器异常，更新失败!");
+        sysRoleService.updateRole(sysRole);
+        return ResultBean.success("更新成功！");
+
     }
 
     @GetMapping("/{id}")
@@ -99,8 +99,8 @@ public class SysRoleController {
         if (roleIdList.isEmpty()) {
             throw SysRoleException.ID_NULL;
         }
-        boolean remove = sysRoleService.removeSysRoleBatch(roleIdList);
-        return remove ? ResultBean.success("删除成功！") : ResultBean.error("删除失败");
+        sysRoleService.removeSysRoleBatch(roleIdList);
+        return ResultBean.success("删除成功！");
     }
 
 
@@ -109,12 +109,8 @@ public class SysRoleController {
     public ResultBean<String> save(
             @RequestBody @Validated({ValidGroup.Insert.class}) SysRoleReq sysRoleReq) {
         SysRole sysRole = SysRoleConvert.req2do(sysRoleReq);
-        boolean save = sysRoleService.saveRole(sysRole);
-        if (save) {
-            return ResultBean.success("角色新增成功");
-        } else {
-            return ResultBean.error("服务器异常角色新增失败");
-        }
+        sysRoleService.saveRole(sysRole);
+        return ResultBean.success("角色新增成功");
     }
 
 

@@ -22,6 +22,6 @@ public class SysMenuCondition {
     @ApiModelProperty(value = "菜单名称，模糊匹配", example = "工作台")
     private String name;
 
-    @ApiModelProperty(value = "菜单状态,参考 CommonStatusEnum 枚举类")
+    @ApiModelProperty(value = "菜单是否渲染,参考 CommonStatusEnum 枚举类")
     private Integer status;
 }

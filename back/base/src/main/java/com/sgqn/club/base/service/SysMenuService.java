@@ -18,6 +18,11 @@ import java.util.List;
 public interface SysMenuService extends IService<SysMenu> {
 
     /**
+     * 初始化菜单的本地缓存
+     */
+    void initLocalCache();
+
+    /**
      * 创建系统菜单
      *
      * @param sysMenu 新增的菜单
@@ -46,6 +51,7 @@ public interface SysMenuService extends IService<SysMenu> {
      * @return 菜单列表
      */
     List<SysMenu> getMenuList();
+
 
 
     /**

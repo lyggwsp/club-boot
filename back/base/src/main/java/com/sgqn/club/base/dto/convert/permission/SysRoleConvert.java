@@ -11,7 +11,10 @@ import com.sgqn.club.base.entity.SysRole;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 
 /**
@@ -51,5 +54,12 @@ public class SysRoleConvert {
             res.add(excelRole);
         });
         return res;
+    }
+
+
+    public static <T, K> Map<K, T> do2Map(List<T> list, Function<T, K> keyExtractor) {
+        HashMap<K, T> map = new HashMap<>();
+        list.forEach(item -> map.put(keyExtractor.apply(item), item));
+        return map;
     }
 }

@@ -60,7 +60,7 @@ public class SysMenuResp {
     private Boolean closeable;
 
     @ApiModelProperty(value = "父菜单 ID ", required = true, example = "1024")
-    private Long parentId;
+    private String parentId;
 
     @ApiModelProperty(value = "显示排序", required = true, example = "1024")
     private Integer sort;

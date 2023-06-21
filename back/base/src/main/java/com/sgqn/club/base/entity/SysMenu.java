@@ -73,6 +73,7 @@ public class SysMenu extends BaseEntity {
 
     /**
      * 是否渲染菜单
+     *  {@link com.sgqn.club.base.constant.CommonStatusEnum}
      */
     @TableField("renderMenu")
     private Boolean renderMenu;
@@ -114,13 +115,11 @@ public class SysMenu extends BaseEntity {
     @TableField("sort")
     private Integer sort;
 
+
     /**
-     * 状态
-     * <p>
-     * {@link com.sgqn.club.base.constant.CommonStatusEnum}
+     * 是否显示
      */
     @TableField("status")
     private Integer status;
-
 
 }

@@ -1,6 +1,7 @@
 package com.sgqn.club.base.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.dto.convert.permission.PermissionConvert;
@@ -33,7 +34,8 @@ import java.util.stream.Collectors;
  * @since 2023-06-13
  */
 @Service
-public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRoleMenu> implements PermissionService {
+public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRoleMenu>
+        implements PermissionService {
 
     @Autowired
     private SysRoleMenuMapper sysRoleMenuMapper;
@@ -64,6 +66,17 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
     @Override
     public void processMenuDeleted(Long menuId) {
         sysRoleMenuMapper.deleteListByMenuId(menuId);
+    }
+
+    @Override
+    public List<SysMenu> getRoleMenuList(Long roleId, Integer menuTypes, Long menusStatuses) {
+        // 任意一个参数为空时，不返回任何数据
+        if (ObjectUtil.isAllNotEmpty(roleId, menuTypes, menusStatuses)) {
+            return Collections.emptyList();
+        }
+        // 获取角色用户的菜单信息
+        // TODO 待完善
+        return null;
     }
 
     /**

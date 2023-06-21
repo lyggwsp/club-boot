@@ -48,7 +48,7 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
             queryWrapper.like(SysMenu::getName, sysMenuCondition.getName());
         }
         if (!StrUtil.isBlankIfStr(sysMenuCondition.getStatus())) {
-            queryWrapper.eq(SysMenu::getStatus, sysMenuCondition.getStatus());
+            queryWrapper.eq(SysMenu::getRenderMenu, sysMenuCondition.getStatus());
         }
         return selectList(queryWrapper);
     }

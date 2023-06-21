@@ -13,21 +13,29 @@ import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.SysRoleCodeEnum;
 import com.sgqn.club.base.constant.SysRoleTypeEnum;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
+import com.sgqn.club.base.dto.convert.permission.SysRoleConvert;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.mapper.SysRoleMapper;
+import com.sgqn.club.base.mq.producer.permission.SysRoleProducer;
 import com.sgqn.club.base.service.PermissionService;
 import com.sgqn.club.base.service.SysRoleService;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -38,8 +46,20 @@ import java.util.stream.Collectors;
  * @author wspstart
  * @since 2023-06-13
  */
+@Slf4j
 @Service
-public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
+public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
+        implements SysRoleService {
+
+    /**
+     * 角色缓存
+     * key：角色编号 {@link SysRole#getId()}
+     * <p>
+     * 这里声明 volatile 修饰的原因是，每次刷新时，直接修改指向
+     */
+    @Getter
+    private volatile Map<Long, SysRole> roleCache;
+
 
     @Autowired
     private SysRoleMapper sysRoleMapper;
@@ -47,6 +67,20 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Autowired
     private PermissionService sysRoleMenuService;
 
+    @Autowired
+    private SysRoleProducer sysRoleProducer;
+
+    /**
+     * 初始化 {@link #roleCache} 缓存
+     */
+    @Override
+    @PostConstruct
+    public void initLocalCache() {
+        List<SysRole> roleList = sysRoleMapper.selectList(null);
+        log.info("[initLocalCache][缓存角色，数量为:{}]", roleList.size());
+        // 第二步：构建缓存
+        roleCache = SysRoleConvert.do2Map(roleList, SysRole::getId);
+    }
 
     /**
      * {@inheritDoc}
@@ -68,9 +102,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeSysRoleBatch(List<Long> roleIds) {
+    public void removeSysRoleBatch(List<Long> roleIds) {
         roleIds.forEach(this::removeSysRoleById);
-        return true;
+        sysRoleProducer.sendRoleRefreshMessage();
     }
 
     /**
@@ -81,7 +115,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeSysRoleById(Long id) {
+    public void removeSysRoleById(Long id) {
         // 1、校验角色信息
         validateRoleForUpdate(id);
         // 2、删除角色信息
@@ -90,7 +124,16 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         LambdaQueryWrapper<SysRoleMenu> wrapper = new QueryWrapper<SysRoleMenu>().lambda()
                 .eq(SysRoleMenu::getRoleId, id);
         sysRoleMenuService.remove(wrapper);
-        return true;
+        // TODO 发送刷新消息
+        // 发送刷新消息. 注意，需要事务提交后，在进行发送刷新消息。不然 db 还未提交，结果缓存先刷新了
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+
+            @Override
+            public void afterCommit() {
+                sysRoleProducer.sendRoleRefreshMessage();
+            }
+
+        });
     }
 
     /**
@@ -101,14 +144,16 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * @return
      */
     @Override
-    public boolean updateRoleStatus(Long roleId, Boolean disabled) {
+    public void updateRoleStatus(Long roleId, Boolean disabled) {
         // 1、校验待角色信息
         validateRoleForUpdate(roleId);
         // 2、更新角色状态
         LambdaUpdateWrapper<SysRole> updateWrapper = new UpdateWrapper<SysRole>().lambda()
                 .eq(SysRole::getId, roleId).set(SysRole::getStatus,
                         disabled ? CommonStatusEnum.ENABLE.getType() : CommonStatusEnum.DISABLE.getType());
-        return this.update(updateWrapper);
+        // TODO 发送刷新消息
+        this.update(updateWrapper);
+        sysRoleProducer.sendRoleRefreshMessage();
     }
 
     /**
@@ -118,12 +163,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * @return
      */
     @Override
-    public boolean updateRole(@NotNull SysRole sysRole) {
+    public void updateRole(@NotNull SysRole sysRole) {
         // 1、校验角色是否可以更新
         validateRoleForUpdate(sysRole.getId());
         // 2、校验角色的唯一字段是否重复
         validateDuplicateSysRole(sysRole.getName(), sysRole.getCode(), sysRole.getId());
-        return this.updateById(sysRole);
+        this.updateById(sysRole);
+        sysRoleProducer.sendRoleRefreshMessage();
     }
 
     /**
@@ -133,12 +179,23 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      * @return
      */
     @Override
-    public boolean saveRole(@NotNull SysRole sysRole) {
+    @Transactional
+    public Long saveRole(@NotNull SysRole sysRole) {
         // 1、校验角色信息
         validateDuplicateSysRole(sysRole.getName(), sysRole.getCode(), null);
         // 2、插入数据到角色表中
         sysRole.setType(SysRoleTypeEnum.CUSTOM.getType());
-        return this.save(sysRole);
+        this.save(sysRole);
+        // 发送刷新消息. 注意，需要事务提交后，在进行发送刷新消息。不然 db 还未提交，结果缓存先刷新了
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+
+            @Override
+            public void afterCommit() {
+                sysRoleProducer.sendRoleRefreshMessage();
+            }
+
+        });
+        return sysRole.getId();
     }
 
     /**
@@ -177,9 +234,22 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             return Collections.emptyList();
         }
         List<SysRole> roleList = getRoleList();
-        List<SysRole> collect = roleList.stream().filter(role -> ids.contains(role.getId()))
+        return roleList.stream().filter(role -> ids.contains(role.getId()))
                 .collect(Collectors.toList());
-        return collect;
+    }
+
+    @Override
+    public SysRole getRoleFromCache(Long id) {
+        return roleCache.get(id);
+    }
+
+    @Override
+    public List<SysRole> getRoleListFromCache(Collection<Long> ids) {
+        if (CollectionUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return roleCache.values().stream().filter(roleDO -> ids.contains(roleDO.getId()))
+                .collect(Collectors.toList());
     }
 
 
