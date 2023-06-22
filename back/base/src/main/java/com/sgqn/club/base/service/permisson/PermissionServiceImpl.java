@@ -1,4 +1,4 @@
-package com.sgqn.club.base.service.impl;
+package com.sgqn.club.base.service.permisson;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -17,7 +17,11 @@ import com.sgqn.club.base.exception.UserException;
 import com.sgqn.club.base.mapper.DepartmentMapper;
 import com.sgqn.club.base.mapper.SysRoleMenuMapper;
 import com.sgqn.club.base.mapper.SysUserRoleClubMapper;
-import com.sgqn.club.base.service.*;
+import com.sgqn.club.base.service.club.ClubService;
+import com.sgqn.club.base.service.permisson.PermissionService;
+import com.sgqn.club.base.service.permisson.SysMenuService;
+import com.sgqn.club.base.service.permisson.SysRoleService;
+import com.sgqn.club.base.service.user.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

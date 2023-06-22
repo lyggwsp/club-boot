@@ -1,4 +1,4 @@
-package com.sgqn.club.base.service;
+package com.sgqn.club.base.service.permisson;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sgqn.club.base.dto.condition.SysMenuCondition;

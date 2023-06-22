@@ -73,5 +73,7 @@ public class Club extends BaseEntity {
     @TableField("cur_session")
     private String curSession;
 
+    @TableField("status")
+    private Integer status;
 
 }

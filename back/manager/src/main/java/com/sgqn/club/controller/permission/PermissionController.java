@@ -3,7 +3,7 @@ package com.sgqn.club.controller.permission;
 import com.sgqn.club.base.bean.ResultBean;
 import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignRoleMenuReq;
 import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignUserClubRoleReq;
-import com.sgqn.club.base.service.PermissionService;
+import com.sgqn.club.base.service.permisson.PermissionService;
 import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

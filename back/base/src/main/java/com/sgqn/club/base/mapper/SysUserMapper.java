@@ -1,5 +1,6 @@
 package com.sgqn.club.base.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.sgqn.club.base.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,4 +16,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
+    default SysUser selectByUsername(String username){
+        return this.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername,username));
+    }
 }

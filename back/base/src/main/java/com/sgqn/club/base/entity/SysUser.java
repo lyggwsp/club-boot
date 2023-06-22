@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.sgqn.club.base.bean.BaseEntity;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author wspstart
@@ -30,7 +31,9 @@ public class SysUser extends BaseEntity {
     private String username;
 
     /**
-     * 用户登录的密码
+     * 加密后的密码
+     * <p>
+     * 因为目前使用 {@link BCryptPasswordEncoder} 加密器，所以无需自己处理 salt 盐
      */
     @TableField("password")
     private String password;
@@ -58,6 +61,9 @@ public class SysUser extends BaseEntity {
      */
     @TableField("detail_id")
     private Long detailId;
+
+    @TableField("status")
+    private Integer status;
 
 
 }

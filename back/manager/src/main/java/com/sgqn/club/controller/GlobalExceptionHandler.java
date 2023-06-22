@@ -8,7 +8,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import org.springframework.security.access.AccessDeniedException;
 /**
  * @author wspstart
  * @description 全局异常处理
@@ -60,5 +60,11 @@ public class GlobalExceptionHandler {
     public ResultBean<?> otherExceptionHandler(Exception e) {
         e.printStackTrace();
         return ResultBean.error("服务器异常,请联系管理员！");
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public ResultBean<?> accessDeniedExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return ResultBean.error("不允许访问！");
     }
 }

@@ -12,13 +12,14 @@ import com.sgqn.club.base.dto.resp.permission.SysRoleExcelResp;
 import com.sgqn.club.base.dto.resp.permission.SysRoleResp;
 import com.sgqn.club.base.entity.SysRole;
 import com.sgqn.club.base.exception.SysRoleException;
-import com.sgqn.club.base.service.SysRoleService;
+import com.sgqn.club.base.service.permisson.SysRoleService;
 import com.sgqn.club.base.utils.ExcelUtils;
 import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,6 +82,7 @@ public class SysRoleController {
 
     @GetMapping("/{id}")
     @ApiOperation("根据ID查询[getById]")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResultBean<?> getById(@PathVariable Long id) {
         Opt.ofNullable(id).orElseThrow(() -> SysRoleException.ID_NULL);
         SysRole sysRole = sysRoleService.getById(id);

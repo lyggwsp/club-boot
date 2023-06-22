@@ -1,10 +1,11 @@
-package com.sgqn.club.base.service.impl;
+package com.sgqn.club.base.service.club;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.entity.Club;
 import com.sgqn.club.base.mapper.ClubMapper;
-import com.sgqn.club.base.service.ClubService;
+import com.sgqn.club.base.service.club.ClubService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,4 +19,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClubServiceImpl extends ServiceImpl<ClubMapper, Club> implements ClubService {
 
+    @Autowired
+    private ClubMapper clubMapper;
+
+    @Override
+    public Club getRoleFromCache(Long clubId) {
+        // TODO 待实现
+        return clubMapper.selectById(clubId);
+    }
 }

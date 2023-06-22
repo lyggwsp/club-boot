@@ -1,10 +1,10 @@
-package com.sgqn.club.base.service.impl;
+package com.sgqn.club.base.service.department;
 
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.entity.Department;
 import com.sgqn.club.base.mapper.DepartmentMapper;
-import com.sgqn.club.base.service.DepartmentService;
+import com.sgqn.club.base.service.department.DepartmentService;
 import org.springframework.stereotype.Service;
 
 /**

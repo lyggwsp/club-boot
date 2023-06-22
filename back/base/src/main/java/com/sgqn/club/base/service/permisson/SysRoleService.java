@@ -1,4 +1,4 @@
-package com.sgqn.club.base.service;
+package com.sgqn.club.base.service.permisson;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

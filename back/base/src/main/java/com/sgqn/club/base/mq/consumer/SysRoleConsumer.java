@@ -1,13 +1,11 @@
 package com.sgqn.club.base.mq.consumer;
 
 import com.sgqn.club.base.mq.message.SysRoleRefreshMessage;
-import com.sgqn.club.base.service.SysRoleService;
+import com.sgqn.club.base.service.permisson.SysRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * @author wspstart

@@ -1,4 +1,4 @@
-package com.sgqn.club.base.service.impl;
+package com.sgqn.club.base.service.permisson;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
@@ -12,8 +12,8 @@ import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.exception.SysMenuException;
 import com.sgqn.club.base.mapper.SysMenuMapper;
 import com.sgqn.club.base.mq.producer.permission.SysMenuProducer;
-import com.sgqn.club.base.service.PermissionService;
-import com.sgqn.club.base.service.SysMenuService;
+import com.sgqn.club.base.service.permisson.PermissionService;
+import com.sgqn.club.base.service.permisson.SysMenuService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

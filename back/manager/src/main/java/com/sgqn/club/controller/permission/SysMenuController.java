@@ -8,7 +8,7 @@ import com.sgqn.club.base.dto.req.permission.menu.SysMenuCreateReq;
 import com.sgqn.club.base.dto.req.permission.menu.SysMenuUpdateReq;
 import com.sgqn.club.base.dto.resp.permission.SysMenuResp;
 import com.sgqn.club.base.entity.SysMenu;
-import com.sgqn.club.base.service.SysMenuService;
+import com.sgqn.club.base.service.permisson.SysMenuService;
 import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import java.util.Comparator;
 import java.util.List;
 
@@ -75,6 +76,7 @@ public class SysMenuController {
 
     @GetMapping("/list-all-simple")
     @ApiOperation("获取菜单精简信息列表[getSimpleMenuList]")
+    @PermitAll
     public ResultBean<?> getSimpleMenuList() {
         // 获取菜单列表，只要求开启状态
         SysMenuCondition menuCondition = SysMenuCondition.builder()

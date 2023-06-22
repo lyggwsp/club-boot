@@ -1,7 +1,7 @@
 package com.sgqn.club.base.mq.consumer;
 
 import com.sgqn.club.base.mq.message.SysMenuRefreshMessage;
-import com.sgqn.club.base.service.SysMenuService;
+import com.sgqn.club.base.service.permisson.SysMenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

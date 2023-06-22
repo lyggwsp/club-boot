@@ -1,4 +1,4 @@
-package com.sgqn.club.base.service;
+package com.sgqn.club.base.service.department;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;

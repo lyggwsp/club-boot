@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.sgqn.club.base.bean.BaseEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -19,9 +18,11 @@ import java.util.Date;
  * @author wspstart
  * @since 2023-06-18
  */
-@Getter
-@Setter
-@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("t_department")
 public class Department extends BaseEntity {
 

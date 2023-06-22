@@ -1,4 +1,4 @@
-package com.sgqn.club.base.service.impl;
+package com.sgqn.club.base.service.permisson;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -19,8 +19,8 @@ import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.mapper.SysRoleMapper;
 import com.sgqn.club.base.mq.producer.permission.SysRoleProducer;
-import com.sgqn.club.base.service.PermissionService;
-import com.sgqn.club.base.service.SysRoleService;
+import com.sgqn.club.base.service.permisson.PermissionService;
+import com.sgqn.club.base.service.permisson.SysRoleService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

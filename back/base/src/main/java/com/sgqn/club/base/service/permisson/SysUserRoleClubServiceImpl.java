@@ -1,9 +1,9 @@
-package com.sgqn.club.base.service.impl;
+package com.sgqn.club.base.service.permisson;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.entity.SysUserRoleClub;
 import com.sgqn.club.base.mapper.SysUserRoleClubMapper;
-import com.sgqn.club.base.service.SysUserRoleClubService;
+import com.sgqn.club.base.service.permisson.SysUserRoleClubService;
 import org.springframework.stereotype.Service;
 
 /**
