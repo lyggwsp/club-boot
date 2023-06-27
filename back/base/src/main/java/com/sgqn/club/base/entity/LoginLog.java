@@ -83,11 +83,5 @@ public class LoginLog extends BaseEntity {
     @TableField("user_agent")
     private String userAgent;
 
-    /**
-     * 是否删除
-     */
-    @TableField("deleted")
-    private Integer deleted;
-
 
 }

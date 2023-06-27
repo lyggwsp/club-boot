@@ -18,9 +18,6 @@ import com.sgqn.club.base.mapper.DepartmentMapper;
 import com.sgqn.club.base.mapper.SysRoleMenuMapper;
 import com.sgqn.club.base.mapper.SysUserRoleClubMapper;
 import com.sgqn.club.base.service.club.ClubService;
-import com.sgqn.club.base.service.permisson.PermissionService;
-import com.sgqn.club.base.service.permisson.SysMenuService;
-import com.sgqn.club.base.service.permisson.SysRoleService;
 import com.sgqn.club.base.service.user.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,14 +70,17 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
     }
 
     @Override
-    public List<SysMenu> getRoleMenuList(Long roleId, Integer menuTypes, Long menusStatuses) {
+    public List<SysMenu> getRoleMenuList(Long roleId, Integer menuTypes, Integer menusStatuses) {
         // 任意一个参数为空时，不返回任何数据
         if (ObjectUtil.isAllNotEmpty(roleId, menuTypes, menusStatuses)) {
             return Collections.emptyList();
         }
         // 获取角色用户的菜单信息
-        // TODO 待完善
-        return null;
+        Set<Long> menuIdsLong = getRoleMenuIds(roleId).stream()
+                .map(Long::parseLong)  // 将 String 转换为 Long
+                .collect(Collectors.toSet());
+        return sysMenuService.getMenuListFromCache(menuIdsLong, Collections.singleton(menuTypes),
+                Collections.singleton(menuTypes));
     }
 
     /**

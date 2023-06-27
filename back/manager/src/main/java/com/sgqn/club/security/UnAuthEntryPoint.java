@@ -1,7 +1,7 @@
 package com.sgqn.club.security;
 
 import com.sgqn.club.base.bean.ResultBean;
-import com.sgqn.club.base.utils.ResponseUtil;
+import com.sgqn.club.base.utils.ServletUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
@@ -29,6 +29,6 @@ public class UnAuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         // 没有权限会往response中存放一些数据 状态码，信息，数据
-        ResponseUtil.out(response, ResultBean.error("无权访问"));
+        ServletUtils.writeJson(response, ResultBean.error("无权访问"));
     }
 }

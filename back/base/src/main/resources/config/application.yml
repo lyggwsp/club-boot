@@ -6,7 +6,11 @@ spring:
     name: defaultDataSource
     username: root
     password: wyr0307
-
+  # redis配置
+  redis:
+    host: 150.158.214.106
+    port: 6379
+    password: wyr0307
 # Mybatis-plus配置
 mybatis-plus:
   configuration:
@@ -15,3 +19,6 @@ mybatis-plus:
   type-aliases-package: com.sgqn.club.base.entity,com.sgqn.club.base.dto
 
 # json统一格式
+token:
+  security-key: security-key-value
+  expires-time: 8640000

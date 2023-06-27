@@ -4,6 +4,7 @@ import com.sgqn.club.base.entity.AuthToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -16,7 +17,11 @@ import java.util.Date;
 @Service
 public class TokenServiceImpl implements TokenService {
 
+
+    @Value("${token.security-key}")
     private String securityKey;
+
+    @Value("${token.expires-time}")
     private Long expiresTime;
 
     @Override

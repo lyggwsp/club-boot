@@ -3,6 +3,7 @@ package com.sgqn.club.base.service.auth;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.LoginLogTypeEnum;
 import com.sgqn.club.base.constant.LoginResultEnum;
+import com.sgqn.club.base.constant.SysMenuTypeEnum;
 import com.sgqn.club.base.dto.convert.auth.AuthConvert;
 import com.sgqn.club.base.dto.req.auth.AuthLoginReq;
 import com.sgqn.club.base.dto.resp.auth.AuthLoginResp;
@@ -10,11 +11,19 @@ import com.sgqn.club.base.entity.*;
 import com.sgqn.club.base.exception.UserException;
 import com.sgqn.club.base.service.club.ClubService;
 import com.sgqn.club.base.service.log.LoginLogService;
+import com.sgqn.club.base.service.permisson.PermissionService;
 import com.sgqn.club.base.service.permisson.SysRoleService;
 import com.sgqn.club.base.service.user.SysUserService;
 import com.sgqn.club.base.utils.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.sgqn.club.base.constant.RedisConstant.TOKEN_STORE;
 
 /**
  * @author wspstart
@@ -39,6 +48,14 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private LoginLogService loginLogService;
 
+    @Autowired
+    private PermissionService permissionService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    // 根据用户获取社团角色信息 --> 点击登录 --> 根据用户名获取用户信息 ---> 存在的话需要获取权限信息存储到redis中
+    // 前端携带token访问后端获取菜单信息接口 --> 获取菜单信息中解析token 获取当前角色对应的角色菜单信息
     @Override
     public AuthLoginResp login(AuthLoginReq authLoginReq) {
         // 无验证码,不需要校验
@@ -46,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
         SysUser sysUser = authenticate(authLoginReq.getUsername(),
                 authLoginReq.getPassword(), authLoginReq.getRoleId(), authLoginReq.getClubId());
         return createTokenAfterLoginSuccess(sysUser.getId(), sysUser.getUsername(),
-                authLoginReq.getRoleId(), authLoginReq.getClubId(), LoginLogTypeEnum.LOGIN_USERNAME);
+                authLoginReq.getRoleId(), authLoginReq.getClubId());
     }
 
     /**
@@ -98,15 +115,19 @@ public class AuthServiceImpl implements AuthService {
      * @param username 用户名
      * @param roleId   角色编号
      * @param clubId   社团编号
-     * @param logType  登录类型
      * @return 认证结果
      */
-    private AuthLoginResp createTokenAfterLoginSuccess(Long userId, String username, Long roleId, Long clubId,
-                                                       LoginLogTypeEnum logType) {
+    private AuthLoginResp createTokenAfterLoginSuccess(Long userId, String username, Long roleId, Long clubId) {
         // 插入登陆日志
-        createLoginLog(userId, username, roleId, clubId, logType, LoginResultEnum.SUCCESS);
+        createLoginLog(userId, username, roleId, clubId, LoginLogTypeEnum.LOGIN_USERNAME, LoginResultEnum.SUCCESS);
         //  创建访问令牌
         AuthToken accessToken = tokenService.createAccessToken(userId, roleId, clubId);
+        // 存储权限信息到redis中
+        List<String> permissions = permissionService.getRoleMenuList(roleId, SysMenuTypeEnum.BUTTON.getType(), CommonStatusEnum.ENABLE.getType()).stream()
+                .map(SysMenu::getPermission)
+                .collect(Collectors.toList());
+        String redisKey = TOKEN_STORE + userId;
+        stringRedisTemplate.opsForValue().set(redisKey, String.join(",", permissions), Duration.ofDays(1));
         // 构建返回结果
         return AuthConvert.do2Resp(accessToken);
     }

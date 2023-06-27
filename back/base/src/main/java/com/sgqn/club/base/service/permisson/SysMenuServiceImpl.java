@@ -57,6 +57,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Getter
     @Setter
     private volatile Map<Long, SysMenu> menuCache;
+
     /**
      * 权限与菜单缓存
      * key：权限 {@link SysMenu#getPermission()}
