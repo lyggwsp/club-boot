@@ -1,5 +1,6 @@
 package com.sgqn.club.base.service.auth;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.LoginLogTypeEnum;
 import com.sgqn.club.base.constant.LoginResultEnum;
@@ -82,20 +83,20 @@ public class AuthServiceImpl implements AuthService {
         SysUser user = sysUserService.getByUserName(username);
         if (user == null) {
             createLoginLog(null, username, roleId, clubId, logTypeEnum, LoginResultEnum.BAD_CREDENTIALS);
-            throw UserException.AUTH_LOGIN_USER_DISABLED;
+            throw UserException.USER_NOT_FOUND_EXCEPTION;
         }
         if (!sysUserService.isPasswordMatch(password, user.getPassword())) {
             createLoginLog(user.getId(), username, roleId, clubId, logTypeEnum, LoginResultEnum.BAD_CREDENTIALS);
-            throw UserException.AUTH_LOGIN_USER_DISABLED;
+            throw UserException.AUTH_LOGIN_BAD_CREDENTIALS;
         }
         // 是否禁用
         if (user.getStatus().equals(CommonStatusEnum.DISABLE.getType())) {
             createLoginLog(user.getId(), username, roleId, clubId, logTypeEnum, LoginResultEnum.USER_DISABLED);
-            throw UserException.USER_NOT_FOUND_EXCEPTION;
+            throw UserException.AUTH_LOGIN_USER_DISABLED;
         }
         // 校验社团
         Club club = clubService.getRoleFromCache(clubId);
-        if (club == null || club.getStatus().equals(CommonStatusEnum.DISABLE.getType())) {
+        if (club == null || club.getStatus().equals(CommonStatusEnum.DISABLE.getType()) || ObjectUtil.equal(club.getId(),club)) {
             createLoginLog(user.getId(), username, roleId, clubId, logTypeEnum, LoginResultEnum.USER_DISABLED);
             throw UserException.USER_NOT_FOUND_EXCEPTION;
         }
@@ -126,8 +127,10 @@ public class AuthServiceImpl implements AuthService {
         List<String> permissions = permissionService.getRoleMenuList(roleId, SysMenuTypeEnum.BUTTON.getType(), CommonStatusEnum.ENABLE.getType()).stream()
                 .map(SysMenu::getPermission)
                 .collect(Collectors.toList());
-        String redisKey = TOKEN_STORE + userId;
-        stringRedisTemplate.opsForValue().set(redisKey, String.join(",", permissions), Duration.ofDays(1));
+        // 获取角色信息
+        String roleCode = sysRoleService.getRoleFromCache(roleId).getCode();
+        String data = String.join(",", permissions) + ",ROLE_" + roleCode;
+        stringRedisTemplate.opsForValue().set(TOKEN_STORE + userId, data, Duration.ofDays(1));
         // 构建返回结果
         return AuthConvert.do2Resp(accessToken);
     }

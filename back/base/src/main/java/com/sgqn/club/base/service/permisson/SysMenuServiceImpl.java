@@ -12,8 +12,6 @@ import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.exception.SysMenuException;
 import com.sgqn.club.base.mapper.SysMenuMapper;
 import com.sgqn.club.base.mq.producer.permission.SysMenuProducer;
-import com.sgqn.club.base.service.permisson.PermissionService;
-import com.sgqn.club.base.service.permisson.SysMenuService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -219,7 +217,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         }
         return menuCache.values().stream().filter(menu -> menuIds.contains(menu.getId())
                         && menuTypes.contains(menu.getMenuType())
-                        && menusStatuses.contains(menu.getRenderMenu()))
+                        && menusStatuses.contains(menu.getRenderMenu() ? 1 : 0))
                 .collect(Collectors.toList());
     }
 

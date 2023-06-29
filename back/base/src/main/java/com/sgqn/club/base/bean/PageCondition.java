@@ -11,10 +11,8 @@ import lombok.NoArgsConstructor;
 /**
  * 分页条件查询。是所有条件查询的父类
  *
- * @param <T>
- *         条件查询的实体类
- *
- * @author Zhinushannan
+ * @param <T> 条件查询的实体类
+ * @author wspstart
  */
 
 @AllArgsConstructor

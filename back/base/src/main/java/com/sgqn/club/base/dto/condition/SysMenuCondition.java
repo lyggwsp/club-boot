@@ -24,4 +24,5 @@ public class SysMenuCondition {
 
     @ApiModelProperty(value = "菜单是否渲染,参考 CommonStatusEnum 枚举类")
     private Integer status;
+
 }

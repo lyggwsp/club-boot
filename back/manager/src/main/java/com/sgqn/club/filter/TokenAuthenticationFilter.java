@@ -45,9 +45,9 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        log.info("请求走TokenAuthenticationFilter过滤器");
         String token = request.getHeader("token");
         if (!StringUtils.isEmpty(token)) {
+            log.info("请求走TokenAuthenticationFilter过滤器,获取到token{}",token);
             AuthToken authToken = tokenService.parseToken(token);
             String permissionStr = stringRedisTemplate.opsForValue().get(TOKEN_STORE + authToken.getUserId());
             Collection<GrantedAuthority> authorities = new ArrayList<>();
@@ -60,6 +60,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
                 });
             }
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authToken.getUserId(), token, authorities);
+            authenticationToken.setDetails(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
         chain.doFilter(request, response);

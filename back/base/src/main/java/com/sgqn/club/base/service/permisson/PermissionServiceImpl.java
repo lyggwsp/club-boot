@@ -72,7 +72,7 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
     @Override
     public List<SysMenu> getRoleMenuList(Long roleId, Integer menuTypes, Integer menusStatuses) {
         // 任意一个参数为空时，不返回任何数据
-        if (ObjectUtil.isAllNotEmpty(roleId, menuTypes, menusStatuses)) {
+        if (!ObjectUtil.isAllNotEmpty(roleId, menuTypes, menusStatuses)) {
             return Collections.emptyList();
         }
         // 获取角色用户的菜单信息
@@ -80,7 +80,7 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
                 .map(Long::parseLong)  // 将 String 转换为 Long
                 .collect(Collectors.toSet());
         return sysMenuService.getMenuListFromCache(menuIdsLong, Collections.singleton(menuTypes),
-                Collections.singleton(menuTypes));
+                Collections.singleton(menusStatuses));
     }
 
     /**

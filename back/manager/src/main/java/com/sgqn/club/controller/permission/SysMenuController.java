@@ -11,8 +11,11 @@ import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.service.permisson.SysMenuService;
 import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +67,9 @@ public class SysMenuController {
 
     @GetMapping("/list")
     @ApiOperation("获取菜单列表[getMenuList]")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "token", required = true),
+    })
     public ResultBean<?> getMenuList(SysMenuCondition sysMenuCondition) {
         List<SysMenu> menuList = sysMenuService.getMenuList(sysMenuCondition);
         if (!menuList.isEmpty()) {
@@ -76,7 +82,9 @@ public class SysMenuController {
 
     @GetMapping("/list-all-simple")
     @ApiOperation("获取菜单精简信息列表[getSimpleMenuList]")
-    @PermitAll
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "token", required = true),
+    })
     public ResultBean<?> getSimpleMenuList() {
         // 获取菜单列表，只要求开启状态
         SysMenuCondition menuCondition = SysMenuCondition.builder()
