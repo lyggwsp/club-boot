@@ -80,7 +80,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
         log.info("[initLocalCache][缓存角色，数量为:{}]", roleList.size());
         // 第二步：构建缓存
         roleCache = SysRoleConvert.do2Map(roleList, SysRole::getId);
-        System.out.println(roleCache);
     }
 
     /**

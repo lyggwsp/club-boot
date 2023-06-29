@@ -19,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import java.util.Comparator;
 import java.util.List;
 
@@ -40,9 +39,10 @@ public class SysMenuController {
     @Autowired
     private SysMenuService sysMenuService;
 
-
     @PostMapping("/create")
     @ApiOperation("创建菜单[createMenu]")
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
+    @PreAuthorize("hasAuthority('system:menu:add')")
     public ResultBean<?> createMenu(@RequestBody @Validated({ValidGroup.Insert.class}) SysMenuCreateReq sysMenuCreateReq) {
         SysMenu sysMenu = SysMenuConvert.req2do(sysMenuCreateReq);
         Long menuId = sysMenuService.createMenu(sysMenu);
@@ -52,6 +52,8 @@ public class SysMenuController {
 
     @PutMapping("/update")
     @ApiOperation("修改菜单[updateMenu]")
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
+    @PreAuthorize("hasAuthority('system:menu:update')")
     public ResultBean<?> updateMenu(@RequestBody SysMenuUpdateReq sysMenuUpdateReq) {
         SysMenu sysMenu = SysMenuConvert.req2do(sysMenuUpdateReq);
         sysMenuService.updateMenu(sysMenu);
@@ -60,6 +62,8 @@ public class SysMenuController {
 
     @DeleteMapping("/delete")
     @ApiOperation("删除菜单[deleteMenu]")
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
+    @PreAuthorize("hasAuthority('system:menu:delete')")
     public ResultBean<?> deleteMenu(@RequestHeader("X-Menu-Id") Long id) {
         sysMenuService.deleteMenu(id);
         return ResultBean.success("删除菜单成功");
@@ -67,24 +71,20 @@ public class SysMenuController {
 
     @GetMapping("/list")
     @ApiOperation("获取菜单列表[getMenuList]")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "token", required = true),
-    })
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
     public ResultBean<?> getMenuList(SysMenuCondition sysMenuCondition) {
         List<SysMenu> menuList = sysMenuService.getMenuList(sysMenuCondition);
         if (!menuList.isEmpty()) {
             List<SysMenuResp> sysMenuResps = SysMenuConvert.do2resp02(menuList);
             sysMenuResps.sort(Comparator.comparing(SysMenuResp::getSort));
-            return ResultBean.success("获取信息成功",sysMenuResps);
+            return ResultBean.success("获取信息成功", sysMenuResps);
         }
         return ResultBean.error("暂无记录");
     }
 
     @GetMapping("/list-all-simple")
     @ApiOperation("获取菜单精简信息列表[getSimpleMenuList]")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "token", required = true),
-    })
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
     public ResultBean<?> getSimpleMenuList() {
         // 获取菜单列表，只要求开启状态
         SysMenuCondition menuCondition = SysMenuCondition.builder()

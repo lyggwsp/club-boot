@@ -2,6 +2,7 @@ package com.sgqn.club.base.service.auth;
 
 import com.sgqn.club.base.dto.req.auth.AuthLoginReq;
 import com.sgqn.club.base.dto.resp.auth.AuthLoginResp;
+import com.sgqn.club.base.entity.AuthToken;
 import com.sgqn.club.base.entity.SysUser;
 
 /**
@@ -21,11 +22,19 @@ public interface AuthService {
 
 
     /**
-     *  验证账号 + 密码。如果通过，则返回用户
+     * 验证账号 + 密码。如果通过，则返回用户
+     *
      * @param username 用户名
      * @param password 用户密码
      * @return 用户
      */
-    SysUser authenticate(String username, String password,Long roleId,Long clubId);
+    SysUser authenticate(String username, String password, Long roleId, Long clubId);
 
+
+    /**
+     * 用户退出登录
+     *
+     * @param authToken 用户
+     */
+    void logout(AuthToken authToken);
 }

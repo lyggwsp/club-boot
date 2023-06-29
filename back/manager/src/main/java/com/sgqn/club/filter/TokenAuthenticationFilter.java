@@ -47,20 +47,24 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = request.getHeader("token");
         if (!StringUtils.isEmpty(token)) {
-            log.info("请求走TokenAuthenticationFilter过滤器,获取到token{}",token);
+            log.info("请求走TokenAuthenticationFilter过滤器,获取到token{}", token);
+            // 1、 解析token
             AuthToken authToken = tokenService.parseToken(token);
+            // 2、根据用户ID获取对应缓存在redis的权限角色信息
             String permissionStr = stringRedisTemplate.opsForValue().get(TOKEN_STORE + authToken.getUserId());
             Collection<GrantedAuthority> authorities = new ArrayList<>();
             if (!StringUtils.isEmpty(permissionStr)) {
                 String[] permissions = permissionStr.split(",");
                 List<String> permissionLists = (List<String>) Convert.toList(permissions);
+                // 构造SimpleGrantedAuthority
                 permissionLists.forEach(i -> {
                     SimpleGrantedAuthority authority = new SimpleGrantedAuthority(i);
                     authorities.add(authority);
                 });
             }
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authToken.getUserId(), token, authorities);
-            authenticationToken.setDetails(authenticationToken);
+            // 3、设置认证信息
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authToken, token, authorities);
+            // 5、将UsernamePasswordAuthenticationToken设置到springSecurity应用上下文中
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
         chain.doFilter(request, response);

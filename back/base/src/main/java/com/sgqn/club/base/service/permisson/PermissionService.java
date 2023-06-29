@@ -5,6 +5,7 @@ import com.sgqn.club.base.dto.req.permission.permission.PermissionAssignUserClub
 import com.sgqn.club.base.entity.SysMenu;
 import com.sgqn.club.base.entity.SysRoleMenu;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -34,8 +35,8 @@ public interface PermissionService extends IService<SysRoleMenu> {
      * @param menusStatuses 菜单状态
      * @return 返回角色对应的菜单信息
      */
-    List<SysMenu> getRoleMenuList(Long roleId, Integer menuTypes,
-                                  Integer menusStatuses);
+    List<SysMenu> getRoleMenuList(Long roleId, Collection<Integer> menuTypes,
+                                  Collection<Integer> menusStatuses);
 
     /**
      * 获取角色拥有的菜单

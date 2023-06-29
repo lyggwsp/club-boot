@@ -1,5 +1,6 @@
 package com.sgqn.club.base.service.auth;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.LoginLogTypeEnum;
@@ -96,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
         }
         // 校验社团
         Club club = clubService.getRoleFromCache(clubId);
-        if (club == null || club.getStatus().equals(CommonStatusEnum.DISABLE.getType()) || ObjectUtil.equal(club.getId(),club)) {
+        if (club == null || club.getStatus().equals(CommonStatusEnum.DISABLE.getType()) || ObjectUtil.equal(club.getId(), club)) {
             createLoginLog(user.getId(), username, roleId, clubId, logTypeEnum, LoginResultEnum.USER_DISABLED);
             throw UserException.USER_NOT_FOUND_EXCEPTION;
         }
@@ -107,6 +108,21 @@ public class AuthServiceImpl implements AuthService {
             throw UserException.USER_NOT_FOUND_EXCEPTION;
         }
         return user;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param authToken 用户
+     */
+    @Override
+    public void logout(AuthToken authToken) {
+        // 1、清空redis缓存中的登录的信息
+        stringRedisTemplate.delete(TOKEN_STORE + authToken.getUserId());
+        // 2、记录退出日志
+        SysUser user = sysUserService.getById(authToken.getUserId());
+        createLoginLog(authToken.getUserId(), user.getUsername(), authToken.getRoleId(), authToken.getClubId(),
+                LoginLogTypeEnum.LOGIN_USERNAME, LoginResultEnum.LOGOUT_SELF);
     }
 
     /**
@@ -124,7 +140,8 @@ public class AuthServiceImpl implements AuthService {
         //  创建访问令牌
         AuthToken accessToken = tokenService.createAccessToken(userId, roleId, clubId);
         // 存储权限信息到redis中
-        List<String> permissions = permissionService.getRoleMenuList(roleId, SysMenuTypeEnum.BUTTON.getType(), CommonStatusEnum.ENABLE.getType()).stream()
+        List<String> permissions = permissionService.getRoleMenuList(roleId, Convert.toSet(Integer.class, SysMenuTypeEnum.BUTTON.getType()),
+                        Convert.toSet(Integer.class, CommonStatusEnum.ENABLE.getType())).stream()
                 .map(SysMenu::getPermission)
                 .collect(Collectors.toList());
         // 获取角色信息
@@ -150,6 +167,13 @@ public class AuthServiceImpl implements AuthService {
         LoginLog log = LoginLog.builder().logType(logTypeEnum.getType()).userId(userId).username(username)
                 .roleId(roleId).clubId(clubId).userAgent(ServletUtils.getUserAgent())
                 .userIp(ServletUtils.getClientIp()).result(loginResult.getResult()).build();
+        /*
+        本地访问存储的IP为 0:0:0:0:0:0:0:1
+        普及:
+        IP地址"0:0:0:0:0:0:0:1"是IPv6的本地环回地址，也被称为"localhost"或"::1"。
+        在Java中，当使用IPv6环境时，如果获取到的IP地址为"0:0:0:0:0:0:0:1"，则表示请求是从本地发起的，也即请求来自于同一台机器上的应用程序。
+         */
         loginLogService.createLogin(log);
     }
+
 }

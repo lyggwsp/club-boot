@@ -16,7 +16,7 @@ public interface TokenService {
      * @param roleId 角色ID
      * @return token
      */
-    AuthToken createAccessToken(Long userId,Long clubId,Long roleId);
+    AuthToken createAccessToken(Long userId,Long roleId,Long clubId);
 
     /**
      * 解析token

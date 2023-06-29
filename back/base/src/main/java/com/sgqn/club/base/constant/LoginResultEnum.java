@@ -14,7 +14,9 @@ public enum LoginResultEnum {
 
     SUCCESS(0), // 成功
     BAD_CREDENTIALS(10), // 账号或密码不正确
-    USER_DISABLED(20) // 用户被禁用
+    USER_DISABLED(20), // 用户被禁用
+    LOGOUT_SELF(200),  // 自己主动登出
+    LOGOUT_DELETE(202), // 强制退出
     ;
     /**
      * 结果

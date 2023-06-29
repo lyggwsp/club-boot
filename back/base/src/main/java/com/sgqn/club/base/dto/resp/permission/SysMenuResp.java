@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author wspstart
  * @description
@@ -64,4 +67,7 @@ public class SysMenuResp {
 
     @ApiModelProperty(value = "显示排序", required = true, example = "1024")
     private Integer sort;
+
+    @ApiModelProperty(value = "菜单子项")
+    private List<SysMenuResp> children = new ArrayList<>();
 }
