@@ -19,5 +19,5 @@ public interface ClubService extends IService<Club> {
      * @param clubId  社团编号
      * @return 社团信息
      */
-    Club getRoleFromCache(Long clubId);
+    Club getClubFromCache(Long clubId);
 }

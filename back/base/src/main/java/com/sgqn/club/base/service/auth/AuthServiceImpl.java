@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
             throw UserException.AUTH_LOGIN_USER_DISABLED;
         }
         // 校验社团
-        Club club = clubService.getRoleFromCache(clubId);
+        Club club = clubService.getClubFromCache(clubId);
         if (club == null || club.getStatus().equals(CommonStatusEnum.DISABLE.getType()) || ObjectUtil.equal(club.getId(), club)) {
             createLoginLog(user.getId(), username, roleId, clubId, logTypeEnum, LoginResultEnum.USER_DISABLED);
             throw UserException.USER_NOT_FOUND_EXCEPTION;

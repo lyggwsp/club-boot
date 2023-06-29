@@ -23,7 +23,7 @@ public class ClubServiceImpl extends ServiceImpl<ClubMapper, Club> implements Cl
     private ClubMapper clubMapper;
 
     @Override
-    public Club getRoleFromCache(Long clubId) {
+    public Club getClubFromCache(Long clubId) {
         // TODO 待实现
         return clubMapper.selectById(clubId);
     }

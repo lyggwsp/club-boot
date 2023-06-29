@@ -1,8 +1,11 @@
 package com.sgqn.club.controller.user;
 
 import com.sgqn.club.base.bean.ResultBean;
+import com.sgqn.club.base.dto.req.user.SysUserReq;
+import com.sgqn.club.base.service.user.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -14,9 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/sys-user")
 @Api(tags = "管理后台 - 用户[user-controller]")
 public class SysUserController {
+
+    @Autowired
+    private SysUserService sysUserService;
+
     @PostMapping("/create")
     @ApiOperation(value = "新增用户")
-    public ResultBean<?> createUser() {
+    public ResultBean<?> createUser(SysUserReq sysUserReq) {
+
         return ResultBean.error("功能未实现");
     }
 

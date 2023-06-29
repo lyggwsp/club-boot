@@ -50,11 +50,6 @@ public class SysUser extends BaseEntity {
     @TableField("email")
     private String email;
 
-    /**
-     * 是否是管理员
-     */
-    @TableField("is_admin")
-    private Integer isAdmin;
 
     /**
      * 对应着用户详情表ID

@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.constant.CommonStatusEnum;
-import com.sgqn.club.base.constant.SysRoleCodeEnum;
+import com.sgqn.club.base.constant.SysRoleEnum;
 import com.sgqn.club.base.constant.SysRoleTypeEnum;
 import com.sgqn.club.base.dto.condition.SysRoleCondition;
 import com.sgqn.club.base.dto.convert.permission.SysRoleConvert;
@@ -19,8 +19,6 @@ import com.sgqn.club.base.entity.SysRoleMenu;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.mapper.SysRoleMapper;
 import com.sgqn.club.base.mq.producer.permission.SysRoleProducer;
-import com.sgqn.club.base.service.permisson.PermissionService;
-import com.sgqn.club.base.service.permisson.SysRoleService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,7 +217,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
         if (CollectionUtil.isEmpty(roleList)) {
             return false;
         }
-        return roleList.stream().anyMatch(role -> SysRoleCodeEnum.isSuperAdmin(role.getCode()));
+        return roleList.stream().anyMatch(role -> SysRoleEnum.isSuperAdmin(role.getCode()));
     }
 
     /**
@@ -281,7 +279,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
      */
     void validateDuplicateSysRole(String roleName, String roleCode, Long id) {
         //1、超级管理员，不允许创建
-        if (SysRoleCodeEnum.isSuperAdmin(roleCode)) {
+        if (SysRoleEnum.isSuperAdmin(roleCode)) {
             throw SysRoleException.ROLE_ADMIN_CODE_ERROR;
         }
         //2、该角色的名字是否被占用

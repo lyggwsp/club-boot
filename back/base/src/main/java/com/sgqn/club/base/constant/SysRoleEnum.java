@@ -11,9 +11,10 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum SysRoleCodeEnum {
+public enum SysRoleEnum {
 
-    SUPER_ADMIN("super_admin", "超级管理员");
+    SUPER_ADMIN("super_admin", "超级管理员",166898949057003521L),
+    ORDINARY_USER("ordinary_user", "普通角色",1670775322423353374L);
 
     /**
      * 角色编码
@@ -23,6 +24,11 @@ public enum SysRoleCodeEnum {
      * 名字
      */
     private final String name;
+
+    /**
+     * 角色编号
+     */
+    private final Long roleId;
 
     /**
      * 校验是否是超级管理员
