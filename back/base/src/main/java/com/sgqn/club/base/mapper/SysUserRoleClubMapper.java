@@ -38,4 +38,13 @@ public interface SysUserRoleClubMapper extends BaseMapper<SysUserRoleClub> {
     default void deleteListByUserId(Long userId) {
         this.delete(new LambdaQueryWrapper<SysUserRoleClub>().eq(SysUserRoleClub::getUserId, userId));
     }
+
+    /**
+     * 根据社团编号删除信息
+     *
+     * @param id 社团编号
+     */
+    default void deleteByClubId(Long id) {
+        this.delete(new LambdaQueryWrapper<SysUserRoleClub>().eq(SysUserRoleClub::getClubId, id));
+    }
 }

@@ -25,6 +25,10 @@ import java.time.LocalDate;
 @ApiModel("创建||更新社团信息请求实体[AuthLoginReq]")
 public class ClubReq {
 
+    @ApiModelProperty(value = "社团编号", required = true, example = "admin")
+    @NotEmpty(groups = ValidGroup.Update.class, message = "编号不能为空")
+    private String id;
+
     @ApiModelProperty(value = "社团名称", required = true, example = "admin")
     @NotEmpty(groups = ValidGroup.Insert.class, message = "社团名称不能为空")
     private String name;

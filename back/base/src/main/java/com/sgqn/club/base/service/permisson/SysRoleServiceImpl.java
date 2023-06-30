@@ -58,7 +58,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
     @Getter
     private volatile Map<Long, SysRole> roleCache;
 
-
     @Autowired
     private SysRoleMapper sysRoleMapper;
 

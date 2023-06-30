@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.sgqn.club.base.dto.req.club.ClubReq;
 import com.sgqn.club.base.entity.Club;
 
+import java.util.List;
+
 /**
  * <p>
  * 服务类
@@ -55,4 +57,11 @@ public interface ClubService extends IService<Club> {
      * @param status 社团状态
      */
     void updateStatus(Long id, Integer status);
+
+    /**
+     * 获取所有社团信息
+     *
+     * @return 社团集合
+     */
+    List<Club> getAll();
 }

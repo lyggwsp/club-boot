@@ -28,4 +28,13 @@ public interface DepartmentMapper extends BaseMapper<Department> {
         return selectOne(new LambdaQueryWrapper<Department>()
                 .eq(Department::getClubId, clubId).eq(Department::getId, deptId));
     }
+
+    /**
+     * 根据社团编号删除
+     *
+     * @param id 社团编号
+     */
+    default void deleteByClubId(Long id) {
+        this.delete(new LambdaQueryWrapper<Department>().eq(Department::getClubId, id));
+    }
 }
