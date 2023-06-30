@@ -6,11 +6,9 @@ import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.SysRoleEnum;
 import com.sgqn.club.base.dto.convert.permission.PermissionConvert;
 import com.sgqn.club.base.dto.convert.user.UserConvert;
+import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
-import com.sgqn.club.base.entity.Club;
-import com.sgqn.club.base.entity.SysRole;
-import com.sgqn.club.base.entity.SysUser;
-import com.sgqn.club.base.entity.SysUserRoleClub;
+import com.sgqn.club.base.entity.*;
 import com.sgqn.club.base.exception.ClubException;
 import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.exception.UserException;
@@ -48,6 +46,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Autowired
     private SysUserRoleClubService sysUserRoleClubService;
 
+    @Autowired
+    private UserDetailService userDetailService;
+
     @Override
     public SysUser getByUserName(String username) {
         return sysUserMapper.selectByUsername(username);
@@ -68,7 +69,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     /**
      * {@inheritDoc}
      *
-     * @param sysUser 待创建的用户
+     * @param sysUserReq 待创建的用户
      * @return
      */
     @Override
@@ -95,10 +96,52 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         // 4、插入用户信息
         SysUser sysUser = UserConvert.req2do(sysUserReq);
+        // 加密密码
+        sysUser.setPassword(encodePassword(sysUser.getPassword()));
+        // 默认开启状态
+        if (ObjectUtil.isEmpty(sysUser.getStatus())) {
+            sysUser.setStatus(CommonStatusEnum.ENABLE.getType());
+        }
         SysUserRoleClub sysUserRoleClub = PermissionConvert.req2do(sysUserReq);
         int insert = sysUserMapper.insert(sysUser);
         sysUserRoleClubService.save(sysUserRoleClub);
         return insert > 0 ? sysUser.getId() : insert;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param sysUserReq 用户信息
+     */
+    @Override
+    public void updateUser(SysUserReq sysUserReq) {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param userId           用户编号
+     * @param sysUserDetailReq 用户详细信息请求实体
+     */
+    @Override
+    public void creatUserDetails(Long userId, SysUserDetailReq sysUserDetailReq) {
+        SysUser sysUser = sysUserMapper.selectById(userId);
+        if (sysUser == null) {
+            return;
+        }
+        sysUser.setNickname(sysUserDetailReq.getNickname());
+        sysUser.setEmail(sysUserDetailReq.getEmail());
+        UserDetail userDetail = UserConvert.req2do(sysUserDetailReq);
+        // 1、保存用户详细信息
+        userDetailService.save(userDetail);
+        Long detailId = userDetail.getId();
+        // 2、关联用户表信息
+        if (detailId != null) {
+            sysUser.setDetailId(detailId);
+            // 3、保存用户报中的用户详细ID
+            sysUserMapper.updateById(sysUser);
+        }
     }
 
     /**

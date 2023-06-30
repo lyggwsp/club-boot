@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * @author wspstart
  * @description
@@ -36,6 +38,7 @@ public class SysUserReq {
     private String nickname;
 
     @ApiModelProperty(value = "邮箱", example = "lyggwsp@163.com")
+    @Pattern(regexp = "^[\\w.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "邮箱格式不正确")
     private String email;
 
     @ApiModelProperty(value = "状态", example = "lyggwsp@163.com")

@@ -1,6 +1,7 @@
 package com.sgqn.club.base.service.user;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
 import com.sgqn.club.base.entity.SysUser;
 
@@ -41,4 +42,20 @@ public interface SysUserService extends IService<SysUser> {
      * @return 用户ID
      */
     Long createUser(SysUserReq sysUserReq);
+
+
+    /**
+     * 修改用户信息
+     *
+     * @param sysUserReq 用户信息
+     */
+    void updateUser(SysUserReq sysUserReq);
+
+    /**
+     * 创建用户详细信息
+     *
+     * @param userId           用户编号
+     * @param sysUserDetailReq 用户详细信息请求实体
+     */
+    void creatUserDetails(Long userId, SysUserDetailReq sysUserDetailReq);
 }
