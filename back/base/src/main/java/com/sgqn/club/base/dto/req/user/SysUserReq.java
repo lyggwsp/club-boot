@@ -41,7 +41,7 @@ public class SysUserReq {
     @Pattern(regexp = "^[\\w.-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "邮箱格式不正确")
     private String email;
 
-    @ApiModelProperty(value = "状态", example = "lyggwsp@163.com")
+    @ApiModelProperty(value = "状态", example = "0")
     private Integer status;
 
 

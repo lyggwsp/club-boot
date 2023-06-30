@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sgqn.club.base.mapper.SysUserMapper">
+    <select id="selectClubRoleUserByPage" resultType="clubRoleUserPage">
+        SELECT
+        tuser.id AS userId,
+        tuser.username,
+        tuser.nickname AS nickName,
+        tuser.email,
+        tuser.status,
+        t_c.name AS clubName,
+        t_c.id AS clubId,
+        t_d.id AS deptId,
+        t_d.name AS deptName,
+        tuser.create_time AS createTime,
+        t_u_r_c.role_id AS roleId,
+        t_r.name AS roleName,
+        t_u_r_c.join_time AS joinTime,
+        t_u_r_c.leave_time AS leaveTime
+        FROM
+        db_club.sys_user AS tuser
+        JOIN db_club.sys_user_role_club AS t_u_r_c ON tuser.id = t_u_r_c.user_id
+        JOIN db_club.sys_role AS t_r ON t_u_r_c.role_id = t_r.id
+        JOIN db_club.t_club AS t_c ON t_u_r_c.club_id = t_c.id
+        LEFT JOIN db_club.t_department AS t_d ON t_u_r_c.dept_id = t_d.id
+        WHERE
+        tuser.deleted = 0
+        AND t_r.deleted = 0
+        AND t_c.deleted = 0
+        AND (t_d.deleted = 0 OR t_d.id IS NULL)
+        <if test="condition.clubId != null">
+            AND t_u_r_c.club_id = #{condition.clubId}
+        </if>
+        <if test="condition.deptId != null">
+            AND t_u_r_c.dept_id = #{condition.deptId}
+        </if>
+        <if test="condition.startTime != null and condition.endTime == null">
+            AND t_u_r_c.create_time &gt;= #{condition.startTime}
+        </if>
+        <if test="condition.startTime != null and condition.endTime != null">
+            AND t_u_r_c.create_time BETWEEN #{condition.startTime} AND #{condition.endTime}
+        </if>
+        <if test="condition.username != null">
+            AND tuser.username = #{condition.username}
+        </if>
+        <if test="condition.email != null">
+            AND tuser.email = #{condition.email}
+        </if>
+        <if test="condition.status != null">
+            AND tuser.status = #{condition.status}
+        </if>
+    </select>
+</mapper>

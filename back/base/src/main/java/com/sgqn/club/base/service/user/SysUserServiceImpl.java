@@ -1,9 +1,11 @@
 package com.sgqn.club.base.service.user;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.constant.SysRoleEnum;
+import com.sgqn.club.base.dto.condition.SysUserCondition;
 import com.sgqn.club.base.dto.convert.permission.PermissionConvert;
 import com.sgqn.club.base.dto.convert.user.UserConvert;
 import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
@@ -83,14 +85,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (!(this.getByUserName(sysUserReq.getUsername()) == null)) {
             throw UserException.USERNAME_EXISTS;
         }
-        // 2、校验社团
+        // 2、校验邮箱是否重复
+        validateEmailExists(sysUserReq.getEmail());
+        // 3、校验社团
         if (ObjectUtil.isNotNull(sysUserReq.getClubId())) {
             Club club = clubService.getById(sysUserReq.getClubId());
             if (club == null || club.getStatus().equals(CommonStatusEnum.DISABLE.getType())) {
                 throw ClubException.CLUB_NOT_FOUND_EXCEPTION;
             }
         }
-        // 3、校验角色(如果角色为空需要直接赋予普通角色)
+        // 4、校验角色(如果角色为空需要直接赋予普通角色)
         if (ObjectUtil.isNull(sysUserReq.getRoleId())) {
             sysUserReq.setRoleId(SysRoleEnum.ORDINARY_USER.getRoleId());
         } else {
@@ -99,7 +103,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 throw SysRoleException.ROLE_NOT_FOUND_EXCEPTION;
             }
         }
-        // 4、插入用户信息
+        // 5、插入用户信息
         SysUser sysUser = UserConvert.req2do(sysUserReq);
         // 加密密码
         sysUser.setPassword(encodePassword(sysUser.getPassword()));
@@ -107,10 +111,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (ObjectUtil.isEmpty(sysUser.getStatus())) {
             sysUser.setStatus(CommonStatusEnum.ENABLE.getType());
         }
-        SysUserRoleClub sysUserRoleClub = PermissionConvert.req2do(sysUserReq);
+        // 向用户表信息插入信息
         int insert = sysUserMapper.insert(sysUser);
+        // 构造用户-社团-角色中间表信息并插入信息
+        SysUserRoleClub sysUserRoleClub = PermissionConvert.req2do(sysUserReq);
+        sysUserRoleClub.setUserId(sysUser.getId());
         sysUserRoleClubService.save(sysUserRoleClub);
-        return insert > 0 ? sysUser.getId() : insert;
+        return sysUser.getId();
     }
 
 
@@ -126,6 +133,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = structureCreateOrUpdate(userId, sysUserDetailReq.getNickname(), sysUserDetailReq.getEmail());
         UserDetail userDetail = UserConvert.req2do(sysUserDetailReq);
         // 1、保存用户详细信息
+        userDetail.setId(null);
         userDetailService.save(userDetail);
         Long detailId = userDetail.getId();
         // 2、关联用户表信息
@@ -148,6 +156,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         // 1、校验邮箱、获取用户登录表实体
         SysUser sysUser = structureCreateOrUpdate(userId, sysUserDetailReq.getNickname(), sysUserDetailReq.getEmail());
         UserDetail userDetail = UserConvert.req2do(sysUserDetailReq);
+        userDetail.setId(sysUser.getDetailId());
         // 2、更新用户基本表信息
         userDetailService.updateById(userDetail);
         // 3、更新用户登录表实体信息
@@ -198,6 +207,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @param sysUserCondition 分页查询条件
+     * @return
+     */
+    @Override
+    public IPage<ClubRoleUserPage> getPage(IPage<ClubRoleUserPage> page, SysUserCondition sysUserCondition) {
+        return sysUserMapper.selectClubRoleUserByPage(page, sysUserCondition);
+    }
+
+    /**
      * 校验用户是否存在
      *
      * @param id 用户编号
@@ -206,6 +226,18 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = sysUserMapper.selectById(id);
         if (sysUser == null) {
             throw UserException.USER_NOT_FOUND_EXCEPTION;
+        }
+    }
+
+    /**
+     * 校验邮箱是否重复
+     *
+     * @param email 邮箱地址
+     */
+    private void validateEmailExists(String email) {
+        SysUser byEmail = sysUserMapper.selectByEmail(email);
+        if (byEmail != null) {
+            throw UserException.EMAIL_EXISTS;
         }
     }
 

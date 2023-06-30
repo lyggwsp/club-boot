@@ -1,14 +1,23 @@
 package com.sgqn.club.controller.user;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sgqn.club.base.bean.ResultBean;
 import com.sgqn.club.base.constant.CommonStatusEnum;
+import com.sgqn.club.base.dto.condition.SysUserCondition;
+import com.sgqn.club.base.dto.convert.user.UserConvert;
 import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
 import com.sgqn.club.base.dto.req.user.SysUserUpdatePasswordReq;
+import com.sgqn.club.base.dto.resp.user.ClubRoleUserPageResp;
 import com.sgqn.club.base.entity.AuthToken;
+import com.sgqn.club.base.entity.ClubRoleUserPage;
 import com.sgqn.club.base.service.user.SysUserService;
+import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.sgqn.club.security.SecurityFrameworkUtils.getAuthToken;
@@ -21,6 +30,7 @@ import static com.sgqn.club.security.SecurityFrameworkUtils.getAuthToken;
 @RestController
 @RequestMapping("/sys-user")
 @Api(tags = "管理后台 - 用户[user-controller]")
+@ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
 public class SysUserController {
 
     @Autowired
@@ -32,18 +42,18 @@ public class SysUserController {
         管理员可修改用户必要信息 ---> sysUser表信息 --> 这个修改是权限管理，需要由权限模块将赋予用户社团角色权限接口实现
         管理员可修改用户状态
         在前端需要提供个人信息模块，在这个模块中，用户可以对个人信息进行修改、可以修改密码、邮箱、用户详情表信息
-
      */
     @PostMapping("/create")
     @ApiOperation(value = "新增用户[管理端调用]")
-    public ResultBean<?> createUser(SysUserReq sysUserReq) {
+    @PreAuthorize("hasAuthority('system:user:add')")
+    public ResultBean<?> createUser(@Validated({ValidGroup.Insert.class}) SysUserReq sysUserReq) {
         Long userId = sysUserService.createUser(sysUserReq);
         return ResultBean.success("新增成功", userId);
     }
 
     @PutMapping("/update-details")
     @ApiOperation(value = "修改用户详细信息[当前接口只允许个人信息修改调用]")
-    public ResultBean<?> updateUser(SysUserDetailReq sysUserDetailReq) {
+    public ResultBean<?> updateUser(@Validated({ValidGroup.Update.class}) SysUserDetailReq sysUserDetailReq) {
         AuthToken authToken = getAuthToken();
         if (authToken == null) {
             return ResultBean.error("用户似乎并没有认证！");
@@ -54,7 +64,6 @@ public class SysUserController {
 
     @PostMapping("/create-detail")
     @ApiOperation(value = "创建用户详情信息[当前接口只允许个人信息新增调用]")
-    @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
     public ResultBean<?> createUserDetail(SysUserDetailReq sysUserDetailReq) {
         AuthToken authToken = getAuthToken();
         if (authToken == null) {
@@ -66,6 +75,7 @@ public class SysUserController {
 
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除用户[管理端调用]")
+    @PreAuthorize("hasAuthority('system:user:delete')")
     public ResultBean<?> deleteUser(Long id) {
         sysUserService.deleteUser(id);
         return ResultBean.success("删除成功");
@@ -80,16 +90,19 @@ public class SysUserController {
 
     @PatchMapping("/update-status")
     @ApiOperation(value = "修改用户状态[管理端调用]")
-    public ResultBean<?> updateUserStatus(@RequestParam @ApiParam(name = "角色编号", required = true) Long id,
-                                          @RequestParam @ApiParam(name = "是否启用", required = true) Boolean disabled) {
+    @PreAuthorize("hasAuthority('system:user:update')")
+    public ResultBean<?> updateUserStatus(@RequestParam @ApiParam(name = "id", required = true) Long id,
+                                          @RequestParam @ApiParam(name = "disabled", required = true) Boolean disabled) {
         sysUserService.updateUserStatus(id, disabled ? CommonStatusEnum.DISABLE.getType() : CommonStatusEnum.ENABLE.getType());
         return ResultBean.success("更新成功");
     }
 
     @GetMapping("/page")
     @ApiOperation(value = "获得用户分页列表")
-    public ResultBean<?> getUserPage() {
-        return ResultBean.error("功能未实现");
+    public ResultBean<IPage<ClubRoleUserPageResp>> getUserPage(SysUserCondition sysUserCondition) {
+        Page<ClubRoleUserPage> page = sysUserCondition.getPage();
+        IPage<ClubRoleUserPage> data = sysUserService.getPage(page, sysUserCondition);
+        return ResultBean.success("获取信息成功！", UserConvert.do2resp(data));
     }
 
     @GetMapping("/list-all-simple")
@@ -98,9 +111,9 @@ public class SysUserController {
         return ResultBean.error("功能未实现");
     }
 
-    @GetMapping("/get")
+    @GetMapping("/get/{id}")
     @ApiOperation(value = "获得用户详情")
-    public ResultBean<?> getInfo() {
+    public ResultBean<?> getInfo(@PathVariable("id") Long id) {
         return ResultBean.error("功能未实现");
     }
 

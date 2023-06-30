@@ -165,6 +165,7 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
         // 校验用户、社团、角色是否存在
         validateUserClubRole(reqVo.getUserId(),
                 reqVo.getClubId(), reqVo.getRoleId(), reqVo.getDeptId());
+        // TODO 同一个社团
         // 插入数据到数据
         SysUserRoleClub sysUserRoleClub = PermissionConvert.req2do(reqVo);
         sysUserRoleClubMapper.insert(sysUserRoleClub);

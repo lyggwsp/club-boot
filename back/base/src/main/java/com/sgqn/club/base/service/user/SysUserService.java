@@ -1,9 +1,14 @@
 package com.sgqn.club.base.service.user;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sgqn.club.base.dto.condition.SysUserCondition;
 import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
+import com.sgqn.club.base.entity.ClubRoleUserPage;
 import com.sgqn.club.base.entity.SysUser;
+
+import java.util.List;
 
 /**
  * <p>
@@ -85,6 +90,15 @@ public interface SysUserService extends IService<SysUser> {
      * @param password 密码
      */
     void updateUserPassword(Long id, String password);
+
+
+    /**
+     * 分页查询获取用户-角色-社团-部门信息
+     *
+     * @param sysUserCondition 分页查询条件
+     * @return IPage
+     */
+    IPage<ClubRoleUserPage> getPage(IPage<ClubRoleUserPage> page, SysUserCondition sysUserCondition);
 
 
 }

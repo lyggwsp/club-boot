@@ -58,7 +58,7 @@ public class PermissionController {
     public ResultBean<?> assignUserRole(@RequestBody @Validated({ValidGroup.Insert.class})
                                         PermissionAssignUserClubRoleReq reqVo) {
         permissionService.assignUserClubRole(reqVo);
-        return ResultBean.error("赋予角色信息成功");
+        return ResultBean.success("赋予角色信息成功");
     }
 
 

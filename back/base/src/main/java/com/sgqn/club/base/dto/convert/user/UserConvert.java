@@ -1,8 +1,11 @@
 package com.sgqn.club.base.dto.convert.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
+import com.sgqn.club.base.dto.resp.user.ClubRoleUserPageResp;
+import com.sgqn.club.base.entity.ClubRoleUserPage;
 import com.sgqn.club.base.entity.SysUser;
 import com.sgqn.club.base.entity.UserDetail;
 
@@ -19,5 +22,13 @@ public class UserConvert {
 
     public static UserDetail req2do(SysUserDetailReq sysUserDetailReq) {
         return BeanUtil.copyProperties(sysUserDetailReq, UserDetail.class);
+    }
+
+
+    public static ClubRoleUserPageResp do2resp(ClubRoleUserPage clubRoleUserPage){
+        return BeanUtil.copyProperties(clubRoleUserPage, ClubRoleUserPageResp.class);
+    }
+    public static IPage<ClubRoleUserPageResp> do2resp(IPage<ClubRoleUserPage> userPageIPage){
+        return userPageIPage.convert(UserConvert::do2resp);
     }
 }

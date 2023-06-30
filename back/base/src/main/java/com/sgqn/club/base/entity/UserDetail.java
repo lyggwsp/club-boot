@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.sgqn.club.base.bean.BaseEntity;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -41,7 +42,7 @@ public class UserDetail extends BaseEntity {
      * 出生年月
      */
     @TableField("birth_date")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     /**
      * 联系电话
@@ -77,7 +78,7 @@ public class UserDetail extends BaseEntity {
      * 入学时间
      */
     @TableField("intake")
-    private Date intake;
+    private LocalDate intake;
 
 
 }

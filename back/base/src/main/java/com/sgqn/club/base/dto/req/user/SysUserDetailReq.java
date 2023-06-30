@@ -1,16 +1,15 @@
 package com.sgqn.club.base.dto.req.user;
 
-import com.sgqn.club.base.validation.ValidGroup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * @author wspstart
@@ -25,7 +24,6 @@ import java.util.Date;
 public class SysUserDetailReq {
 
     @ApiModelProperty(value = "用户编号", example = "101100")
-    @NotNull(groups = {ValidGroup.Update.class}, message = "用户编号不能为空")
     private Long id;
 
     @ApiModelProperty(value = "邮箱", example = "lyggwsp@163.com")
@@ -44,7 +42,8 @@ public class SysUserDetailReq {
 
 
     @ApiModelProperty(value = "出生年月日", example = "2022-02-12")
-    private Date birthDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthDate;
 
     @ApiModelProperty(value = "手机号", example = "13052179213")
     private String phone;
@@ -65,6 +64,7 @@ public class SysUserDetailReq {
     @ApiModelProperty(value = "专业", example = "软件工程")
     private String major;
 
-    @ApiModelProperty(value = "入学时间", example = "2023")
-    private Date intake;
+    @ApiModelProperty(value = "入学时间", example = "2021-01-09")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate intake;
 }
