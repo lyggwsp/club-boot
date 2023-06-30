@@ -14,6 +14,7 @@ import com.sgqn.club.base.exception.SysRoleException;
 import com.sgqn.club.base.exception.UserException;
 import com.sgqn.club.base.mapper.SysUserMapper;
 import com.sgqn.club.base.service.club.ClubService;
+import com.sgqn.club.base.service.permisson.PermissionService;
 import com.sgqn.club.base.service.permisson.SysRoleService;
 import com.sgqn.club.base.service.permisson.SysUserRoleClubService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     private UserDetailService userDetailService;
+
+    @Autowired
+    private PermissionService permissionService;
 
     @Override
     public SysUser getByUserName(String username) {
@@ -158,6 +162,38 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = new SysUser();
         sysUser.setId(id);
         sysUser.setStatus(status);
+        sysUserMapper.updateById(sysUser);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param id 用户编号
+     */
+    @Override
+    public void deleteUser(Long id) {
+        // 1、校验用户是否存在
+        validateUserExists(id);
+        // 2、 删除用户
+        sysUserMapper.deleteById(id);
+        // 3、删除相关联的其他信息
+        permissionService.processUserDeleted(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param id       用户编号
+     * @param password 密码
+     */
+    @Override
+    public void updateUserPassword(Long id, String password) {
+        // 校验用户是否存在
+        validateUserExists(id);
+        // 更新密码
+        SysUser sysUser = new SysUser();
+        sysUser.setId(id);
+        sysUser.setPassword(encodePassword(password)); // 加密密码
         sysUserMapper.updateById(sysUser);
     }
 

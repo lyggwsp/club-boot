@@ -68,4 +68,12 @@ public interface PermissionService extends IService<SysRoleMenu> {
      * @param permissionAssignUserClubRoleReq 赋予用户-社团-角色实体
      */
     void assignUserClubRole(PermissionAssignUserClubRoleReq permissionAssignUserClubRoleReq);
+
+
+    /**
+     * 处理用户删除是，删除关联授权数据
+     *
+     * @param userId 用户编号
+     */
+    void processUserDeleted(Long userId);
 }

@@ -4,6 +4,7 @@ import com.sgqn.club.base.bean.ResultBean;
 import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
+import com.sgqn.club.base.dto.req.user.SysUserUpdatePasswordReq;
 import com.sgqn.club.base.entity.AuthToken;
 import com.sgqn.club.base.service.user.SysUserService;
 import io.swagger.annotations.*;
@@ -65,14 +66,16 @@ public class SysUserController {
 
     @DeleteMapping("/delete")
     @ApiOperation(value = "删除用户[管理端调用]")
-    public ResultBean<?> deleteUser() {
-        return ResultBean.error("功能未实现");
+    public ResultBean<?> deleteUser(Long id) {
+        sysUserService.deleteUser(id);
+        return ResultBean.success("删除成功");
     }
 
     @PatchMapping("/update-password")
     @ApiOperation(value = "更新用户密码[个人信息端修改密码]")
-    public ResultBean<?> updateUserPassword() {
-        return ResultBean.error("功能未实现");
+    public ResultBean<?> updateUserPassword(SysUserUpdatePasswordReq sysUserUpdatePasswordReq) {
+        sysUserService.updateUserPassword(sysUserUpdatePasswordReq.getId(), sysUserUpdatePasswordReq.getPassword());
+        return ResultBean.success("密码更新成功");
     }
 
     @PatchMapping("/update-status")

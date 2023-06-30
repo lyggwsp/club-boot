@@ -70,5 +70,21 @@ public interface SysUserService extends IService<SysUser> {
      */
     void updateUserStatus(Long id, Integer status);
 
+    /**
+     * 删除用户信息
+     *
+     * @param id 用户编号
+     */
+    void deleteUser(Long id);
+
+
+    /**
+     * 修改用户密码
+     *
+     * @param id       用户编号
+     * @param password 密码
+     */
+    void updateUserPassword(Long id, String password);
+
 
 }

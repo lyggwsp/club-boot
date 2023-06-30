@@ -69,8 +69,15 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
         sysRoleMenuMapper.deleteListByMenuId(menuId);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param roleId        角色ID
+     * @param menuTypes     菜单类型
+     * @param menusStatuses 菜单状态
+     * @return
+     */
     @Override
-    public List<SysMenu> getRoleMenuList(Long roleId,  Collection<Integer> menuTypes, Collection<Integer> menusStatuses) {
+    public List<SysMenu> getRoleMenuList(Long roleId, Collection<Integer> menuTypes, Collection<Integer> menusStatuses) {
         // 任意一个参数为空时，不返回任何数据
         if (!ObjectUtil.isAllNotEmpty(roleId, menuTypes, menusStatuses)) {
             return Collections.emptyList();
@@ -79,7 +86,7 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
         Set<Long> menuIdsLong = getRoleMenuIds(roleId).stream()
                 .map(Long::parseLong)  // 将 String 转换为 Long
                 .collect(Collectors.toSet());
-        return sysMenuService.getMenuListFromCache(menuIdsLong,menuTypes, menusStatuses);
+        return sysMenuService.getMenuListFromCache(menuIdsLong, menuTypes, menusStatuses);
     }
 
     /**
@@ -161,6 +168,18 @@ public class PermissionServiceImpl extends ServiceImpl<SysRoleMenuMapper, SysRol
         // 插入数据到数据
         SysUserRoleClub sysUserRoleClub = PermissionConvert.req2do(reqVo);
         sysUserRoleClubMapper.insert(sysUserRoleClub);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param userId 用户编号
+     */
+    @Override
+    @Transactional
+    public void processUserDeleted(Long userId) {
+        sysUserRoleClubMapper.deleteListByUserId(userId);
+        //TODO 刷新本地缓存
     }
 
 
