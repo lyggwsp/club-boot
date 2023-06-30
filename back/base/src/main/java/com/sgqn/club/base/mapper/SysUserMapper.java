@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author wspstart
@@ -16,7 +16,13 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
-    default SysUser selectByUsername(String username){
-        return this.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername,username));
+    default SysUser selectByUsername(String username) {
+        return this.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, username));
     }
+
+
+    default SysUser selectByEmail(String email) {
+        return this.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, email));
+    }
+
 }

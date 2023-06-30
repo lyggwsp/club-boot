@@ -1,14 +1,12 @@
 package com.sgqn.club.controller.user;
 
 import com.sgqn.club.base.bean.ResultBean;
+import com.sgqn.club.base.constant.CommonStatusEnum;
 import com.sgqn.club.base.dto.req.user.SysUserDetailReq;
 import com.sgqn.club.base.dto.req.user.SysUserReq;
 import com.sgqn.club.base.entity.AuthToken;
 import com.sgqn.club.base.service.user.SysUserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,20 +34,25 @@ public class SysUserController {
 
      */
     @PostMapping("/create")
-    @ApiOperation(value = "新增用户")
+    @ApiOperation(value = "新增用户[管理端调用]")
     public ResultBean<?> createUser(SysUserReq sysUserReq) {
         Long userId = sysUserService.createUser(sysUserReq);
         return ResultBean.success("新增成功", userId);
     }
 
     @PutMapping("/update-details")
-    @ApiOperation(value = "修改用户详细信息")
+    @ApiOperation(value = "修改用户详细信息[当前接口只允许个人信息修改调用]")
     public ResultBean<?> updateUser(SysUserDetailReq sysUserDetailReq) {
-        return ResultBean.error("功能未实现");
+        AuthToken authToken = getAuthToken();
+        if (authToken == null) {
+            return ResultBean.error("用户似乎并没有认证！");
+        }
+        sysUserService.updateUserDetails(authToken.getUserId(), sysUserDetailReq);
+        return ResultBean.error("信息修改成功！");
     }
 
     @PostMapping("/create-detail")
-    @ApiOperation(value = "创建用户详情信息")
+    @ApiOperation(value = "创建用户详情信息[当前接口只允许个人信息新增调用]")
     @ApiImplicitParams({@ApiImplicitParam(paramType = "header", name = "token", required = true)})
     public ResultBean<?> createUserDetail(SysUserDetailReq sysUserDetailReq) {
         AuthToken authToken = getAuthToken();
@@ -61,21 +64,23 @@ public class SysUserController {
     }
 
     @DeleteMapping("/delete")
-    @ApiOperation(value = "删除用户")
+    @ApiOperation(value = "删除用户[管理端调用]")
     public ResultBean<?> deleteUser() {
         return ResultBean.error("功能未实现");
     }
 
     @PatchMapping("/update-password")
-    @ApiOperation(value = "更新用户密码")
+    @ApiOperation(value = "更新用户密码[个人信息端修改密码]")
     public ResultBean<?> updateUserPassword() {
         return ResultBean.error("功能未实现");
     }
 
     @PatchMapping("/update-status")
-    @ApiOperation(value = "修改用户状态")
-    public ResultBean<?> updateUserStatus() {
-        return ResultBean.error("功能未实现");
+    @ApiOperation(value = "修改用户状态[管理端调用]")
+    public ResultBean<?> updateUserStatus(@RequestParam @ApiParam(name = "角色编号", required = true) Long id,
+                                          @RequestParam @ApiParam(name = "是否启用", required = true) Boolean disabled) {
+        sysUserService.updateUserStatus(id, disabled ? CommonStatusEnum.DISABLE.getType() : CommonStatusEnum.ENABLE.getType());
+        return ResultBean.success("更新成功");
     }
 
     @GetMapping("/page")

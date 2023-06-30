@@ -45,17 +45,30 @@ public interface SysUserService extends IService<SysUser> {
 
 
     /**
-     * 修改用户信息
-     *
-     * @param sysUserReq 用户信息
-     */
-    void updateUser(SysUserReq sysUserReq);
-
-    /**
      * 创建用户详细信息
      *
      * @param userId           用户编号
      * @param sysUserDetailReq 用户详细信息请求实体
      */
     void creatUserDetails(Long userId, SysUserDetailReq sysUserDetailReq);
+
+
+    /**
+     * 修改用户详细信息
+     *
+     * @param userId           用户编号
+     * @param sysUserDetailReq 用户详细信息请求实体
+     */
+    void updateUserDetails(Long userId, SysUserDetailReq sysUserDetailReq);
+
+
+    /**
+     * 更新角色状态
+     *
+     * @param id     用户编号
+     * @param status 状态值
+     */
+    void updateUserStatus(Long id, Integer status);
+
+
 }

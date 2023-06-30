@@ -19,6 +19,7 @@ import com.sgqn.club.base.service.permisson.SysUserRoleClubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -108,14 +109,27 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         return insert > 0 ? sysUser.getId() : insert;
     }
 
+
     /**
      * {@inheritDoc}
      *
-     * @param sysUserReq 用户信息
+     * @param userId           用户编号
+     * @param sysUserDetailReq 用户详细信息请求实体
      */
     @Override
-    public void updateUser(SysUserReq sysUserReq) {
-
+    @Transactional
+    public void creatUserDetails(Long userId, SysUserDetailReq sysUserDetailReq) {
+        SysUser sysUser = structureCreateOrUpdate(userId, sysUserDetailReq.getNickname(), sysUserDetailReq.getEmail());
+        UserDetail userDetail = UserConvert.req2do(sysUserDetailReq);
+        // 1、保存用户详细信息
+        userDetailService.save(userDetail);
+        Long detailId = userDetail.getId();
+        // 2、关联用户表信息
+        if (detailId != null) {
+            sysUser.setDetailId(detailId);
+            // 3、保存用户表中的用户详细ID
+            sysUserMapper.updateById(sysUser);
+        }
     }
 
     /**
@@ -125,23 +139,63 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * @param sysUserDetailReq 用户详细信息请求实体
      */
     @Override
-    public void creatUserDetails(Long userId, SysUserDetailReq sysUserDetailReq) {
+    @Transactional
+    public void updateUserDetails(Long userId, SysUserDetailReq sysUserDetailReq) {
+        // 1、校验邮箱、获取用户登录表实体
+        SysUser sysUser = structureCreateOrUpdate(userId, sysUserDetailReq.getNickname(), sysUserDetailReq.getEmail());
+        UserDetail userDetail = UserConvert.req2do(sysUserDetailReq);
+        // 2、更新用户基本表信息
+        userDetailService.updateById(userDetail);
+        // 3、更新用户登录表实体信息
+        sysUserMapper.updateById(sysUser);
+    }
+
+    @Override
+    public void updateUserStatus(Long id, Integer status) {
+        // 校验用户是否存在
+        validateUserExists(id);
+        // 更新状态
+        SysUser sysUser = new SysUser();
+        sysUser.setId(id);
+        sysUser.setStatus(status);
+        sysUserMapper.updateById(sysUser);
+    }
+
+    /**
+     * 校验用户是否存在
+     *
+     * @param id 用户编号
+     */
+    private void validateUserExists(Long id) {
+        SysUser sysUser = sysUserMapper.selectById(id);
+        if (sysUser == null) {
+            throw UserException.USER_NOT_FOUND_EXCEPTION;
+        }
+    }
+
+    /**
+     * 校验邮箱，同时返回登录用户表信息
+     *
+     * @param userId   用户编号
+     * @param nickName 用户昵称
+     * @param email    邮箱
+     * @return 登录用户表信息实体
+     */
+    private SysUser structureCreateOrUpdate(Long userId, String nickName, String email) {
+        // 1、获取用户登录表信息
         SysUser sysUser = sysUserMapper.selectById(userId);
         if (sysUser == null) {
-            return;
+            throw UserException.USER_NOT_FOUND_EXCEPTION;
         }
-        sysUser.setNickname(sysUserDetailReq.getNickname());
-        sysUser.setEmail(sysUserDetailReq.getEmail());
-        UserDetail userDetail = UserConvert.req2do(sysUserDetailReq);
-        // 1、保存用户详细信息
-        userDetailService.save(userDetail);
-        Long detailId = userDetail.getId();
-        // 2、关联用户表信息
-        if (detailId != null) {
-            sysUser.setDetailId(detailId);
-            // 3、保存用户报中的用户详细ID
-            sysUserMapper.updateById(sysUser);
+        // 2、校验邮箱是否重复
+        SysUser byEmail = sysUserMapper.selectByEmail(email);
+        if (byEmail != null && !byEmail.getId().equals(userId)) {
+            throw UserException.EMAIL_EXISTS;
         }
+        // 3、设置邮箱、昵称
+        sysUser.setNickname(nickName);
+        sysUser.setEmail(email);
+        return sysUser;
     }
 
     /**
